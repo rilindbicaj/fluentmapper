@@ -5,7 +5,7 @@ import com.bicicom.fluentmapper.core.config.MapperConfiguration;
 
 public final class InternalMapperConfigurationBuilder implements MapperConfigurationBuilder {
 
-    private String exportPath = "src/main/resources/META-INF/orm.xml";
+    private String exportPath;
     private boolean exports = false;
     private String mappingsLocation;
 

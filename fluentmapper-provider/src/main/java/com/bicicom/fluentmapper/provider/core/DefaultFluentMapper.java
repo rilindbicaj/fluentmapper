@@ -63,15 +63,7 @@ public final class DefaultFluentMapper implements FluentMapper {
         this.mappings = this.executor.parseModels(models);
 
         if (this.mapperConfiguration.exports()) {
-            try {
-                String outputPath = mapperConfiguration.exportPath();
-                FileOutputStream fileOutputStream = new FileOutputStream(outputPath);
-                fileOutputStream.write(getMappings().getBytes());
-                fileOutputStream.close();
-                logger.info("Finished outputting mappings - have a nice day!");
-            } catch (IOException e) {
-                throw new FluentMapperException("Could not output mappings;", e);
-            }
+            this.exportMappings();
         }
 
         this.executor.shutdown();
@@ -86,6 +78,32 @@ public final class DefaultFluentMapper implements FluentMapper {
             return EntityClassFinder.getClasses(
                     mapperConfiguration.mappingsLocation()
             );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Exports the final generated mappings to the path provided in the configuration.
+     * <p>
+     * Ideally these would be somehow output in the `resources` folder, but since it's
+     * supposed to be read-only, it's best if this file is exported somewhere in the
+     * file system.
+     */
+
+    private void exportMappings() {
+        try {
+            String outputPath = mapperConfiguration.exportPath();
+
+            if (outputPath == null) {
+                throw new FluentMapperException("No output path specified.");
+            }
+            FileOutputStream fileOutputStream = new FileOutputStream(outputPath);
+            fileOutputStream.write(getMappings().getBytes());
+            fileOutputStream.close();
+            logger.info("Finished outputting mappings - have a nice day!");
+        } catch (IOException e) {
+            throw new FluentMapperException("Could not output mappings;", e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

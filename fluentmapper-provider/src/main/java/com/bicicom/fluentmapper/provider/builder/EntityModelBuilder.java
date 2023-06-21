@@ -8,6 +8,8 @@ import com.bicicom.fluentmapper.provider.model.mutable.EntityModel;
 import com.bicicom.fluentmapper.provider.model.mutable.Key;
 import com.bicicom.fluentmapper.provider.model.mutable.Table;
 
+import java.util.Collection;
+
 public class EntityModelBuilder<S> extends BaseModelBuilder implements ModelBuilder<S> {
 
     private final EntityModel entityModel;
@@ -56,12 +58,14 @@ public class EntityModelBuilder<S> extends BaseModelBuilder implements ModelBuil
     }
 
     @Override
-    public <T> PartialOneRelationshipConfigurationBuilder<T, S> hasOne(Expression<S, T> expression) {
+    public <T> OneRelationshipConfigurationBuilder<T, S> hasOne(Expression<S, T> expression) {
         return null;
     }
 
     @Override
-    public <T> PartialManyRelationshipConfigurationBuilder hasMany(Expression<S, T> expression) {
+    public <T> ManyRelationshipConfigurationBuilder<T, S> hasMany(Expression<S, Collection<T>> expression) {
         return null;
     }
+
+
 }
