@@ -1,7 +1,7 @@
-package com.bibicom.fluentmapper.provider.expression.parser;
+package com.bicicom.fluentmapper.provider.expression.parser;
 
-import com.bibicom.fluentmapper.provider.testutils.User;
 import com.bicicom.fluentmapper.expression.Expression;
+import com.bicicom.fluentmapper.provider.testutils.models.User;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

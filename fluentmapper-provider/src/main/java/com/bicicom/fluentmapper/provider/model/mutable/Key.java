@@ -14,6 +14,7 @@ public class Key implements ReadonlyKey {
         this.column = new Column();
         this.column.setName(name);
         this.column.setUnique(true);
+        this.column.setNullable(false);
     }
 
     @Override
@@ -33,5 +34,5 @@ public class Key implements ReadonlyKey {
     public void setColumn(Column column) {
         this.column = column;
     }
-    
+
 }

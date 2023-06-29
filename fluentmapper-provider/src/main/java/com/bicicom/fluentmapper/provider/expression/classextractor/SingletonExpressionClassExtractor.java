@@ -1,5 +1,7 @@
 package com.bicicom.fluentmapper.provider.expression.classextractor;
 
+import com.bicicom.fluentmapper.provider.core.loader.ModelClassloader;
+
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -9,6 +11,7 @@ import java.util.regex.Pattern;
 public final class SingletonExpressionClassExtractor implements ExpressionClassExtractor {
 
     private static final ExpressionClassExtractor parser = new SingletonExpressionClassExtractor();
+    private static final ModelClassloader modelClassloader = ModelClassloader.instance();
     private final Pattern bracketLPattern = Pattern.compile("(\\(L|\\)L)");
     private final Pattern divisorPattern = Pattern.compile("/");
 
@@ -23,7 +26,7 @@ public final class SingletonExpressionClassExtractor implements ExpressionClassE
     }
 
     private String getAccessedPropertyTypeName(String property, String containingClass) throws Exception {
-        final Field field = Class.forName(containingClass)
+        final Field field = Class.forName(containingClass, false, modelClassloader.getClassloader())
                 .getDeclaredField(property);
 
         if (Collection.class.isAssignableFrom(field.getType())) {

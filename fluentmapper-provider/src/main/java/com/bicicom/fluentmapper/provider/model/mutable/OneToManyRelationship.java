@@ -1,10 +1,12 @@
 package com.bicicom.fluentmapper.provider.model.mutable;
 
-import com.bicicom.fluentmapper.provider.model.ReadonlyOneToOneRelationship;
+import com.bicicom.fluentmapper.model.builder.FetchType;
+import com.bicicom.fluentmapper.provider.model.ReadonlyOneToManyRelationship;
 
-public final class OneToOneRelationship extends Relationship implements ReadonlyOneToOneRelationship {
+public final class OneToManyRelationship extends Relationship implements ReadonlyOneToManyRelationship {
     private String mappedBy;
     private JoinColumn joinColumn;
+    private FetchType fetch_type;
 
     @Override
     public String getMappedBy() {

@@ -5,11 +5,13 @@ import com.bicicom.fluentmapper.core.FluentMapper;
 import com.bicicom.fluentmapper.core.config.MapperConfiguration;
 import com.bicicom.fluentmapper.provider.core.executor.TaskExecutor;
 import com.bicicom.fluentmapper.provider.core.executor.classfinder.EntityClassFinder;
+import com.bicicom.fluentmapper.provider.core.executor.classfinder.URLClassFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
@@ -51,8 +53,13 @@ public final class DefaultFluentMapper implements FluentMapper {
 
     @Override
     public void execute() {
-        logger.info("Locating mappings in package {}", mapperConfiguration.mappingsLocation());
-        var mappers = this.findAllEntityClasses().stream()
+        logger.info("Locating mappings in package {}", mapperConfiguration.mappingsPackage());
+
+        List<Class<? extends EntityMapper<?>>> mappingClasses =
+                mapperConfiguration.pathStrategy().equals("path") ?
+                        this.findEntityClassesFromPath() : this.findAllEntityClassesFromPackage();
+
+        var mappers = mappingClasses.stream()
                 .map(toMapper)
                 .peek(mapping -> logger.debug("Registered mapping {}", mapping.getClass().getName()))
                 .toList();
@@ -73,10 +80,21 @@ public final class DefaultFluentMapper implements FluentMapper {
         return this.mappings;
     }
 
-    private List<Class<? extends EntityMapper<?>>> findAllEntityClasses() {
+    private List<Class<? extends EntityMapper<?>>> findAllEntityClassesFromPackage() {
         try {
             return EntityClassFinder.getClasses(
-                    mapperConfiguration.mappingsLocation()
+                    mapperConfiguration.mappingsPackage()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<Class<? extends EntityMapper<?>>> findEntityClassesFromPath() {
+        try {
+            return new URLClassFinder().findMappingClasses(
+                    mapperConfiguration.mappingsPath(),
+                    mapperConfiguration.mappingsPackage()
             );
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -93,14 +111,18 @@ public final class DefaultFluentMapper implements FluentMapper {
 
     private void exportMappings() {
         try {
-            String outputPath = mapperConfiguration.exportPath();
+            String[] outputPaths = mapperConfiguration.exportPaths();
 
-            if (outputPath == null) {
+            if (outputPaths.length == 0) {
                 throw new FluentMapperException("No output path specified.");
             }
-            FileOutputStream fileOutputStream = new FileOutputStream(outputPath);
-            fileOutputStream.write(getMappings().getBytes());
-            fileOutputStream.close();
+
+            for (String path : outputPaths) {
+                Writer fileWriter = new FileWriter(path, false);
+                fileWriter.write(this.getMappings());
+                fileWriter.close();
+            }
+
             logger.info("Finished outputting mappings - have a nice day!");
         } catch (IOException e) {
             throw new FluentMapperException("Could not output mappings;", e);

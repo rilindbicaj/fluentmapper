@@ -1,8 +1,10 @@
 package com.bicicom.fluentmapper.core.config;
 
 public record MapperConfiguration(
-        String exportPath,
+        String[] exportPaths,
         boolean exports,
-        String mappingsLocation
+        String mappingsPackage,
+        String mappingsPath,
+        String pathStrategy
 ) {
 }

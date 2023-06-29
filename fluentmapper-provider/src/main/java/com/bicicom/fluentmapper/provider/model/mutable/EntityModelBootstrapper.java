@@ -1,5 +1,7 @@
 package com.bicicom.fluentmapper.provider.model.mutable;
 
+import com.bicicom.fluentmapper.provider.core.loader.ModelClassloader;
+
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -28,7 +30,7 @@ public final class EntityModelBootstrapper {
 
     public static EntityModelBootstrapper forClass(String qualifiedClassName) {
         try {
-            Class<?> entityClass = Class.forName(qualifiedClassName);
+            Class<?> entityClass = Class.forName(qualifiedClassName, true, ModelClassloader.instance().getClassloader());
             return new EntityModelBootstrapper(entityClass);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -36,8 +38,13 @@ public final class EntityModelBootstrapper {
     }
 
     // Could maybe support other cases besides CamelCase...maybe...possibly
-    private static boolean isKeyCandidate(String fieldName, String entityClassName) {
-        return fieldName.equals("id") || fieldName.equals(toCamelCase(entityClassName) + "Id");
+    private static boolean isKeyCandidate(Field field, String entityClassName) {
+        return field.getName().equals("id") || field.getName().equals(toCamelCase(entityClassName) + "Id");
+    }
+
+    private static boolean isBasicCandidate(Field field) {
+        var fieldType = field.getType();
+        return fieldType == Integer.class || fieldType == String.class; // Support more in the future
     }
 
     private static String toCamelCase(String className) {
@@ -62,14 +69,14 @@ public final class EntityModelBootstrapper {
 
     private List<BasicAttribute> findBasicCandidates(List<Field> modelFields, String entityClassName) {
         return modelFields.stream()
-                .filter(field -> !isKeyCandidate(field.getName(), this.entityClass.getSimpleName()))
+                .filter(EntityModelBootstrapper::isBasicCandidate)
                 .map(field -> new BasicAttribute(field.getName()))
                 .toList();
     }
 
     private List<Key> findIdCandidates(List<Field> modelFields, String entityClassName) {
         return modelFields.stream()
-                .filter(field -> isKeyCandidate(field.getName(), this.entityClass.getSimpleName()))
+                .filter(field -> isKeyCandidate(field, this.entityClass.getSimpleName()))
                 .map(field -> new Key(field.getName()))
                 .toList();
     }

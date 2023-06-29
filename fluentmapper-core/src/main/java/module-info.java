@@ -1,4 +1,4 @@
 module fluentmapper.core {
-    requires fluentmapper.api;
-    requires fluentmapper.provider;
+    requires transitive fluentmapper.api;
+    requires transitive fluentmapper.provider;
 }

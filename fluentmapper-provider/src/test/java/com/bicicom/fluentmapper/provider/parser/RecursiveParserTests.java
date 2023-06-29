@@ -1,4 +1,4 @@
-package com.bibicom.fluentmapper.provider.parser;
+package com.bicicom.fluentmapper.provider.parser;
 
 import org.junit.jupiter.api.Test;
 

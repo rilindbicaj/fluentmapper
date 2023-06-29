@@ -1,6 +1,7 @@
 package com.bicicom.fluentmapper.provider.expression.parser;
 
 import com.bicicom.fluentmapper.expression.Expression;
+import com.bicicom.fluentmapper.provider.core.loader.ModelClassloader;
 import com.bicicom.fluentmapper.provider.expression.classextractor.ExpressionClassExtractor;
 import com.bicicom.fluentmapper.provider.expression.classextractor.SingletonExpressionClassExtractor;
 import org.objectweb.asm.ClassReader;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.invoke.SerializedLambda;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -59,7 +61,11 @@ public class CachedConcurrentExpressionParser extends ExpressionParser {
             final ClassReader classReader;
 
             try {
-                classReader = new ClassReader(containingClass);
+                classReader = new ClassReader(
+                        Objects.requireNonNull(ModelClassloader.instance().getClassloader().getResourceAsStream(
+                                containingClass.replace('.', '/') + ".class"
+                        ))
+                );
             } catch (IOException e) {
                 throw new ExpressionParseException("Unable to read class file for " + containingClass + ";", e);
             }

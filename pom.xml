@@ -6,12 +6,13 @@
 
     <groupId>com.bicicom.fluentmapper</groupId>
     <artifactId>fluentmapper-parent</artifactId>
-    <version>0.1.0</version>
+    <version>0.0.1</version>
     <packaging>pom</packaging>
     <modules>
         <module>fluentmapper-core</module>
         <module>fluentmapper-api</module>
         <module>fluentmapper-provider</module>
+        <module>fluentmapper-maven-plugin</module>
     </modules>
 
     <properties>

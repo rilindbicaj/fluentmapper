@@ -8,6 +8,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The data structure representing the Entity Model.
+ * <p>
+ * The order of the fields must unfortunately be the same as the order in the XML file.
+ * This logic should be pushed into the parser in the future!
+ */
+
 public class EntityModel implements ReadonlyEntityModel {
 
     private final Map<String, Attribute> attributes = new HashMap<>();
@@ -91,7 +98,7 @@ public class EntityModel implements ReadonlyEntityModel {
 
 
     public void addRelationship(ReadonlyRelationship relationship) {
-        //
+        this.attributes.put(relationship.getName() + relationship.hashCode(), relationship);
     }
 
 }

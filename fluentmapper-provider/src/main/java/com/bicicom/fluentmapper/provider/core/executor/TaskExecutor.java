@@ -25,6 +25,9 @@ public final class TaskExecutor {
     }
 
     public List<ReadonlyEntityModel> executeMappers(List<EntityMapper<?>> mappers) {
+
+        //Thread.currentThread().setContextClassLoader(URLClassFinder.classLoader);
+
         var tasks = mappers.stream()
                 .map(ConfigurationBuildingTask::new)
                 .toList();

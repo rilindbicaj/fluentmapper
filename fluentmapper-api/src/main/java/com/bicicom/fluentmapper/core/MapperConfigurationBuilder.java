@@ -7,7 +7,9 @@ package com.bicicom.fluentmapper.core;
 public interface MapperConfigurationBuilder {
     MapperConfigurationBuilder withMappingsPackage(String mappingsPackage);
 
+    MapperConfigurationBuilder withMappingsPath(String mappingsPath);
+
     MapperConfigurationBuilder exports();
 
-    MapperConfigurationBuilder exports(String path);
+    MapperConfigurationBuilder exportsTo(String... paths);
 }
