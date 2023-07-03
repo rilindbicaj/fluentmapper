@@ -1,8 +1,12 @@
 package com.bicicom.fluentmapper.model.builder;
 
+import com.bicicom.fluentmapper.expression.Expression;
+
 public interface JoinColumnConfigurationBuilder extends ColumnConfigurationBuilder {
 
-    JoinColumnConfigurationBuilder onEntity(String referencedEntity);
+    <S> JoinColumnConfigurationBuilder referencing(Expression<S, ?> propertyExpression);
+
+    JoinColumnConfigurationBuilder referencing(String referencedColumnName);
 
     JoinColumnConfigurationBuilder withLength(int length);
 

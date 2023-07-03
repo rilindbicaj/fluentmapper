@@ -13,18 +13,25 @@ public class KeyBuilder<S, T> extends BaseModelBuilder implements KeyConfigurati
     private final Key key;
 
     public KeyBuilder(Key key) {
-        super();
         this.key = key;
     }
 
     @Override
-    public KeyConfigurationBuilder<S, T> toColumn(String column, Consumer<ColumnConfigurationBuilder> columnConfigurationConsumer) {
-        Column keyColumn = new Column(column);
+    public KeyConfigurationBuilder<S, T> toColumn(String columnName) {
+        Column keyColumn = new Column(columnName);
+        key.setColumn(keyColumn);
+
+        return this;
+    }
+
+    @Override
+    public KeyConfigurationBuilder<S, T> toColumn(String columnName, Consumer<ColumnConfigurationBuilder> columnConfigurationConsumer) {
+        Column keyColumn = new Column(columnName);
         ColumnBuilder columnBuilder = new ColumnBuilder(keyColumn);
 
         columnConfigurationConsumer.accept(columnBuilder);
         key.setColumn(keyColumn);
-        
+
         return this;
     }
 }

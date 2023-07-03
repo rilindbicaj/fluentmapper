@@ -10,6 +10,8 @@ import java.util.function.Consumer;
  */
 public interface KeyConfigurationBuilder<S, P> {
 
-    KeyConfigurationBuilder<S, P> toColumn(String column, Consumer<ColumnConfigurationBuilder> columnConfigurationConsumer);
+    KeyConfigurationBuilder<S, P> toColumn(String columnName);
+
+    KeyConfigurationBuilder<S, P> toColumn(String columnName, Consumer<ColumnConfigurationBuilder> columnConfigurationConsumer);
 
 }

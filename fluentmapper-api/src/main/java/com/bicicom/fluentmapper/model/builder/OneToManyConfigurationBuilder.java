@@ -5,22 +5,12 @@ import com.bicicom.fluentmapper.expression.Expression;
 public interface OneToManyConfigurationBuilder<S, T> {
 
     /**
-     * Specifies the property by which to order the relationship. Whatever this means.
+     * Specifies the property in the related entity which maps this relationship. If this
+     * is not configured explicitly, the default option will be chosen.
      *
-     * @param propertyExpression
-     * @return the builder
+     * @param propertyExpression the property accessing expression
+     * @return the builder for chaining calls
      */
-    OneToManyConfigurationBuilder<S, T> orderBy(Expression<S, ?> propertyExpression);
-
-    /**
-     * Specifies the property in S which maps the relationship.
-     *
-     * @param propertyExpression
-     * @return the builder
-     */
-    OneToManyConfigurationBuilder<S, T> mappedBy(Expression<S, T> propertyExpression);
-
-    OneToManyConfigurationBuilder<S, T> fetch(FetchType fetchType);
+    OneToManyConfigurationBuilder<S, T> mappedBy(Expression<T, S> propertyExpression);
 
 }
-

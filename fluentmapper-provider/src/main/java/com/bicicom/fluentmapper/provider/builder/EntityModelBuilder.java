@@ -59,12 +59,16 @@ public class EntityModelBuilder<S> extends BaseModelBuilder implements ModelBuil
 
     @Override
     public <T> OneRelationshipConfigurationBuilder<T, S> hasOne(Expression<S, T> expression) {
-        return null;
+        var parsedExpression = parse(expression);
+
+        return new OneRelationshipBuilder<>(entityModel, parsedExpression.property());
     }
 
     @Override
     public <T> ManyRelationshipConfigurationBuilder<T, S> hasMany(Expression<S, Collection<T>> expression) {
-        return null;
+        var parsedExpression = parse(expression);
+
+        return new ManyRelationshipBuilder<>(parsedExpression.property(), entityModel);
     }
 
 

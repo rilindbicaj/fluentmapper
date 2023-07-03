@@ -1,7 +1,6 @@
 package com.bicicom.fluentmapper.provider.builder;
 
 import com.bicicom.fluentmapper.model.builder.ColumnConfigurationBuilder;
-import com.bicicom.fluentmapper.model.builder.FetchType;
 import com.bicicom.fluentmapper.model.builder.PropertyConfigurationBuilder;
 import com.bicicom.fluentmapper.provider.model.mutable.BasicAttribute;
 import com.bicicom.fluentmapper.provider.model.mutable.Column;
@@ -34,8 +33,4 @@ public class PropertyBuilder implements PropertyConfigurationBuilder {
         return this;
     }
 
-    @Override
-    public PropertyConfigurationBuilder hasFetchType(FetchType fetchType) {
-        throw new UnsupportedOperationException();
-    }
 }

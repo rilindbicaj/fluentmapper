@@ -15,6 +15,6 @@ public class AddressMapping implements EntityMapper<Address> {
 
         modelBuilder.hasMany(Address::getUsers)
                 .withOne(User::getAddress)
-                .joinsOn("address_id");
+                .mappedBy(User::getAddress);
     }
 }

@@ -16,14 +16,21 @@ public interface OneToOneConfigurationBuilder<S, T> {
      * @param propertyExpression the expression accessing the property mapping the relationship
      * @return the builder
      */
-    OneToOneConfigurationBuilder<S, T> mappedBy(Expression<S, ?> propertyExpression);
+    OneToOneConfigurationBuilder<S, T> mappedBy(Expression<T, S> propertyExpression);
 
     /**
-     * Specifies cascade handling for this relationship.
+     * Marks the relationship as non-owned and mapped by the referenced entity.
      *
-     * @param cascadeType the cascade type
-     * @return the builder
+     * @return the same builder for chaining calls
      */
-    OneToOneConfigurationBuilder<S, T> cascade(CascadeType cascadeType);
+    OneToOneConfigurationBuilder<S, T> isMapped();
+
+    /**
+     * Specifies the foreign key of this relationship, present in the source model.
+     *
+     * @param foreignKeyProperty
+     * @return a builder for configuring the foreign key column
+     */
+    JoinColumnConfigurationBuilder hasForeignKey(String foreignKeyProperty);
 
 }

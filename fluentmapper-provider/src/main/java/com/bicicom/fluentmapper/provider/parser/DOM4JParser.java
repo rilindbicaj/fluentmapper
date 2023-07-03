@@ -1,5 +1,6 @@
 package com.bicicom.fluentmapper.provider.parser;
 
+import com.bicicom.fluentmapper.provider.core.FluentMapperException;
 import com.bicicom.fluentmapper.provider.model.ReadonlyEntityModel;
 import com.bicicom.fluentmapper.provider.model.mutable.*;
 import org.dom4j.DocumentHelper;
@@ -24,15 +25,25 @@ class DOM4JParser {
         this.tags.put(BasicAttribute.class, "basic");
         this.tags.put(Table.class, "table");
         this.tags.put(Column.class, "column");
+        this.tags.put(JoinColumn.class, "join-column");
+        this.tags.put(InverseJoinColumn.class, "inverse-join-column");
+        this.tags.put(JoinTable.class, "join-table");
+        this.tags.put(OneToOneRelationship.class, "one-to-one");
+        this.tags.put(OneToManyRelationship.class, "one-to-many");
+        this.tags.put(ManyToOneRelationship.class, "many-to-one");
+        this.tags.put(ManyToManyRelationship.class, "many-to-many");
     }
 
     private static void tryAddAttribute(Element e, Field f, Object o) {
         try {
-            // Find a better way to parse _class
-            String fieldName = f.getName().charAt(0) == '_' ? f.getName().substring(1) : f.getName();
-            e.addAttribute(fieldName, f.get(o).toString());
+            Object fieldValue = f.get(o);
+            if (fieldValue != null) {
+                String fieldName = f.getName().charAt(0) == '_' ? f.getName().substring(1) : f.getName();
+                fieldName = fieldName.replace('_', '-'); // For all the mapped-by and target-entity
+                e.addAttribute(fieldName, f.get(o).toString());
+            }
         } catch (IllegalAccessException ex) {
-            throw new RuntimeException(ex);
+            throw new FluentMapperException("Could not add attribute field " + f.getName(), ex);
         }
     }
 
@@ -42,11 +53,15 @@ class DOM4JParser {
     }
 
     private Element recursiveParse(Object o) {
+        if (o == null) {
+            return null;
+        }
+
         Class<?> modelClass = o.getClass();
         String xmlTag = this.tags.get(modelClass);
         Element element = DocumentHelper.createElement(xmlTag);
 
-        List<Field> modelFields = Arrays.stream(modelClass.getDeclaredFields()).toList();
+        List<Field> modelFields = this.getAllModelFields(modelClass);
         modelFields.forEach(field -> field.setAccessible(true));
 
         List<Field> attributeFields = modelFields.stream()
@@ -62,13 +77,25 @@ class DOM4JParser {
 
         attributeFields.forEach(field -> tryAddAttribute(element, field, o));
         elementFields.forEach(elementField -> {
-            element.add(this.tryParseElement(elementField, o));
+            var parsed = this.tryParseElement(elementField, o);
+            if (parsed != null) {
+                element.add(parsed);
+            }
         });
         collectionFields.forEach(field -> {
             element.add(tryParseCollection(field, o));
         });
 
         return element;
+    }
+
+    private List<Field> getAllModelFields(Class<?> modelClass) {
+        List<Field> fields = new ArrayList<>();
+        while (modelClass != null) {
+            fields.addAll(Arrays.asList(modelClass.getDeclaredFields()));
+            modelClass = modelClass.getSuperclass();
+        }
+        return fields;
     }
 
     private boolean isAttributeType(Field field) {
@@ -91,7 +118,10 @@ class DOM4JParser {
                     .sorted(Comparator.comparingInt((Object a) -> a.getClass().getAnnotation(Sequence.class).value()))
                     .toList();
             sortedBySequence.forEach(el -> {
-                root.add(this.recursiveParse(el));
+                Element parsed = this.recursiveParse(el);
+                if (parsed != null) {
+                    root.add(parsed);
+                }
             });
             return root;
         } catch (IllegalAccessException e) {

@@ -22,6 +22,9 @@ public class EntityModel implements ReadonlyEntityModel {
     private String _class;
     private Table table;
 
+    public EntityModel() {
+        
+    }
 
     EntityModel(String name, String entityClass) {
         this.name = name;

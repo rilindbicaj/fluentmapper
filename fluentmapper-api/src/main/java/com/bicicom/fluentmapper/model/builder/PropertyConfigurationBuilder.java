@@ -8,6 +8,4 @@ public interface PropertyConfigurationBuilder {
 
     PropertyConfigurationBuilder isOptional(boolean value);
 
-    PropertyConfigurationBuilder hasFetchType(FetchType fetchType);
-
 }
