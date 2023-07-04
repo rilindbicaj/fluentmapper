@@ -7,14 +7,20 @@ import com.bicicom.fluentmapper.provider.expression.parser.ExpressionParser;
 
 abstract class BaseModelBuilder {
 
-    protected final ExpressionParser parser;
+    /**
+     * Ensures all model builders use the same parser to utilize caching
+     */
+    private static final ExpressionParser parser;
+
+    static {
+        parser = CachedConcurrentExpressionParser.withCachedExtractor();
+    }
 
     protected BaseModelBuilder() {
-        this.parser = CachedConcurrentExpressionParser.withCachedExtractor();
     }
 
     protected <S, T> ExpressionMetadata parse(Expression<S, T> expression) {
-        return this.parser.parse(expression);
+        return parser.parse(expression);
     }
 
 }

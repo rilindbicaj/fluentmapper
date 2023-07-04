@@ -10,20 +10,16 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-
-@Mojo(name = "FluentMapper", defaultPhase = LifecyclePhase.COMPILE)
+@Mojo(name = "generate-mappings", defaultPhase = LifecyclePhase.COMPILE)
 public class FluentMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
-    @Parameter(property = "FluentMapper.exportPath")
+    @Parameter(property = "generate-mappings.exportPath")
     private String exportPath;
 
-    @Parameter(property = "FluentMapper.mappingsPackage")
+    @Parameter(property = "generate-mappings.mappingsPackage")
     private String mappingsPackage;
 
     @Override
@@ -33,7 +29,10 @@ public class FluentMojo extends AbstractMojo {
 
         final String classpath;
         try {
-            classpath = project.getCompileClasspathElements().get(0);
+            classpath = project.getCompileClasspathElements()
+                    .stream()
+                    .reduce("", String::concat);
+            getLog().info("Final classpath - " + classpath);
         } catch (DependencyResolutionRequiredException e) {
             throw new MojoFailureException("Could not access classpath - ", e);
         }
@@ -49,14 +48,7 @@ public class FluentMojo extends AbstractMojo {
                     .withMappingsPackage(mappingsPackage)
                     .withMappingsPath(classpath);
         }).execute();
-
-        getLog().info("FluentMapper done!");
-
-    }
-
-    private ClassLoader getProjectClassloader(String classPath) throws MalformedURLException {
-        URL[] urls = new URL[]{new URL("file:///" + classPath + "/")};
-        return URLClassLoader.newInstance(urls, Thread.currentThread().getContextClassLoader());
+        
     }
 
 }

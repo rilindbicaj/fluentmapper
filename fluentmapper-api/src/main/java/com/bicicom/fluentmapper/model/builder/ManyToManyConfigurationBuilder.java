@@ -23,4 +23,38 @@ public interface ManyToManyConfigurationBuilder<S, T> {
 
     ManyToManyConfigurationBuilder<S, T> mappedBy(Expression<T, Collection<S>> propertyExpression);
 
+
+    /**
+     * <p>
+     * Specifies this relationship as mapped by the owning side, with the property used to create
+     * the builder through `withMany()`. A shorthand so the same expression does not have to be
+     * passed twice.
+     * </p>
+     * Meaning, this mapping -
+     * <pre>
+     *     {@code
+     *       modelBuilder.hasMany(Address::getUsers)
+     *                      .withMany(User::getAddresses)
+     *                      .mappedBy(User::getAddresses);
+     *       }
+     * </pre>
+     * <p>
+     * is equivalent to -
+     * </p>
+     * <pre>
+     *     {@code
+     *       modelBuilder.hasMany(Address::getUsers)
+     *                      .withMany(User::getAddresses)
+     *                      .isMapped();
+     *       }
+     * </pre>
+     * noting the model User as the owner of the relationship, and the one who maps
+     * this relationship further.
+     *
+     * @return the same builder for chaining calls
+     */
+
+    ManyToManyConfigurationBuilder<S, T> isMapped();
+
+
 }

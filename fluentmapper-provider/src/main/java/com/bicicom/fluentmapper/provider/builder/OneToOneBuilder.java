@@ -3,17 +3,18 @@ package com.bicicom.fluentmapper.provider.builder;
 import com.bicicom.fluentmapper.expression.Expression;
 import com.bicicom.fluentmapper.model.builder.JoinColumnConfigurationBuilder;
 import com.bicicom.fluentmapper.model.builder.OneToOneConfigurationBuilder;
+import com.bicicom.fluentmapper.provider.expression.parser.ExpressionMetadata;
 import com.bicicom.fluentmapper.provider.model.mutable.JoinColumn;
 import com.bicicom.fluentmapper.provider.model.mutable.OneToOneRelationship;
 
 public class OneToOneBuilder<S, T> extends BaseModelBuilder implements OneToOneConfigurationBuilder<S, T> {
 
-    private final String withOne;
+    private final ExpressionMetadata builderContext;
     private final OneToOneRelationship relationship;
 
-    OneToOneBuilder(OneToOneRelationship relationship, String withOne) {
+    OneToOneBuilder(OneToOneRelationship relationship, ExpressionMetadata builderContext) {
         this.relationship = relationship;
-        this.withOne = withOne;
+        this.builderContext = builderContext;
     }
 
     @Override
@@ -26,7 +27,7 @@ public class OneToOneBuilder<S, T> extends BaseModelBuilder implements OneToOneC
 
     @Override
     public OneToOneConfigurationBuilder<S, T> isMapped() {
-        this.relationship.setMappedBy(withOne);
+        this.relationship.setMappedBy(builderContext.property());
         return this;
     }
 

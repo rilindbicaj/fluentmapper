@@ -23,7 +23,6 @@ public class ConfigurationBuildingTask<T> implements Callable<ReadonlyEntityMode
 
     @Override
     public ReadonlyEntityModel call() {
-        System.out.println(Thread.currentThread().getId());
         mapper.configure(this.modelBuilder);
         return modelBuilder.getModel();
     }

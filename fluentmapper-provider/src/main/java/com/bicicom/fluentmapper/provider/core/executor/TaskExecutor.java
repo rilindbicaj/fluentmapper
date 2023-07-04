@@ -11,7 +11,8 @@ public final class TaskExecutor {
     private final ExecutorService executorService;
 
     public TaskExecutor() {
-        this.executorService = Executors.newFixedThreadPool(3);
+        // Caching has proved more efficient than concurrency at least for smaller loads
+        this.executorService = Executors.newFixedThreadPool(1);
     }
 
     private static ReadonlyEntityModel tryGetModel(Future<ReadonlyEntityModel> builderTaskFuture) {
@@ -25,9 +26,6 @@ public final class TaskExecutor {
     }
 
     public List<ReadonlyEntityModel> executeMappers(List<EntityMapper<?>> mappers) {
-
-        //Thread.currentThread().setContextClassLoader(URLClassFinder.classLoader);
-
         var tasks = mappers.stream()
                 .map(ConfigurationBuildingTask::new)
                 .toList();

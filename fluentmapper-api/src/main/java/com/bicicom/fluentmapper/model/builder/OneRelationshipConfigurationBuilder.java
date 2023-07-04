@@ -19,6 +19,10 @@ public interface OneRelationshipConfigurationBuilder<T, S> {
 
     OneToOneConfigurationBuilder<S, T> withOne(Expression<T, S> expression);
 
+    OneToOneConfigurationBuilder<S, T> withOne();
+
     ManyToOneConfigurationBuilder<S, T> withMany(Expression<T, Collection<S>> expression);
+
+    ManyToOneConfigurationBuilder<S, T> withMany();
 
 }

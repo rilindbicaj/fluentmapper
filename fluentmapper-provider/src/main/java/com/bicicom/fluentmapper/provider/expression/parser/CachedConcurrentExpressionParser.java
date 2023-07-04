@@ -14,9 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.invoke.SerializedLambda;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -56,16 +56,21 @@ public class CachedConcurrentExpressionParser extends ExpressionParser {
 
         if (classLambdas.get(containingClass) == null) {
 
-            logger.trace("Caching expressions in {}", containingClass);
+            logger.debug("Attempting to cache expressions in {}", containingClass);
             // If not present in cache, read the class and cache its methods
             final ClassReader classReader;
 
             try {
-                classReader = new ClassReader(
-                        Objects.requireNonNull(ModelClassloader.instance().getClassloader().getResourceAsStream(
-                                containingClass.replace('.', '/') + ".class"
-                        ))
-                );
+                final InputStream classfileStream = ModelClassloader.instance()
+                        .getClassloader()
+                        .getResourceAsStream(
+                                containingClass.replace('.', '/') + ".class");
+
+                if (classfileStream == null) {
+                    throw new IOException("Could not create inputstream to class file " + containingClass);
+                }
+
+                classReader = new ClassReader(classfileStream);
             } catch (IOException e) {
                 throw new ExpressionParseException("Unable to read class file for " + containingClass + ";", e);
             }
@@ -82,6 +87,8 @@ public class CachedConcurrentExpressionParser extends ExpressionParser {
                                     method -> method.name,
                                     methodNode -> methodNode
                             )));
+
+            logger.debug("Cached expresions in class {}", containingClass);
         }
 
         expressionLambda = this.classLambdas.get(containingClass).get(lambdaSignature);

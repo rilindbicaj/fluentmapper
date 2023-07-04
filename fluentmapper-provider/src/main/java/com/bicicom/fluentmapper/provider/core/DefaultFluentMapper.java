@@ -6,6 +6,7 @@ import com.bicicom.fluentmapper.core.config.MapperConfiguration;
 import com.bicicom.fluentmapper.provider.core.executor.TaskExecutor;
 import com.bicicom.fluentmapper.provider.core.executor.classfinder.EntityClassFinder;
 import com.bicicom.fluentmapper.provider.core.executor.classfinder.URLClassFinder;
+import com.bicicom.fluentmapper.provider.core.loader.ModelClassloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +72,14 @@ public final class DefaultFluentMapper implements FluentMapper {
 
         if (this.mapperConfiguration.exports()) {
             this.exportMappings();
+        }
+
+        if (this.mapperConfiguration.pathStrategy().equals("path")) {
+            try {
+                ModelClassloader.instance().release();
+            } catch (IOException e) {
+                logger.warn("Could not release classloader resources", e);
+            }
         }
 
         this.executor.shutdown();

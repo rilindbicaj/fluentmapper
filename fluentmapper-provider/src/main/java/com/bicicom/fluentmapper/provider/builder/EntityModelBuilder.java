@@ -15,7 +15,6 @@ public class EntityModelBuilder<S> extends BaseModelBuilder implements ModelBuil
     private final EntityModel entityModel;
 
     private EntityModelBuilder(String qualifiedEntityClass) {
-        super();
         this.entityModel = EntityModel.fromClass(qualifiedEntityClass);
     }
 
@@ -30,9 +29,8 @@ public class EntityModelBuilder<S> extends BaseModelBuilder implements ModelBuil
     @Override
     public <T> KeyConfigurationBuilder<S, T> hasKey(Expression<S, T> expression) {
         var metadata = parse(expression);
-        String property = metadata.property();
+        var key = new Key(metadata.property());
 
-        Key key = new Key(property);
         this.entityModel.addKey(key);
 
         return new KeyBuilder<>(key);
@@ -41,7 +39,8 @@ public class EntityModelBuilder<S> extends BaseModelBuilder implements ModelBuil
     @Override
     public PropertyConfigurationBuilder property(Expression<S, ?> expression) {
         var metadata = parse(expression);
-        BasicAttribute basicAttribute = new BasicAttribute(metadata.property());
+        var basicAttribute = new BasicAttribute(metadata.property());
+
         entityModel.addBasicAttribute(basicAttribute);
 
         return new PropertyBuilder(basicAttribute);
@@ -49,9 +48,10 @@ public class EntityModelBuilder<S> extends BaseModelBuilder implements ModelBuil
 
     @Override
     public TableConfigurationBuilder toTable(String tableName) {
-        Table table = new Table();
-        table.setName(tableName);
+        var table = new Table();
 
+        table.setName(tableName);
+        table.setSchema("public");
         entityModel.setTable(table);
 
         return new TableBuilder(table);
@@ -61,14 +61,14 @@ public class EntityModelBuilder<S> extends BaseModelBuilder implements ModelBuil
     public <T> OneRelationshipConfigurationBuilder<T, S> hasOne(Expression<S, T> expression) {
         var parsedExpression = parse(expression);
 
-        return new OneRelationshipBuilder<>(entityModel, parsedExpression.property());
+        return new OneRelationshipBuilder<>(entityModel, parsedExpression);
     }
 
     @Override
     public <T> ManyRelationshipConfigurationBuilder<T, S> hasMany(Expression<S, Collection<T>> expression) {
         var parsedExpression = parse(expression);
 
-        return new ManyRelationshipBuilder<>(parsedExpression.property(), entityModel);
+        return new ManyRelationshipBuilder<>(entityModel, parsedExpression);
     }
 
 

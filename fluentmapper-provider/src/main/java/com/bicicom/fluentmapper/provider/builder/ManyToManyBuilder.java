@@ -11,9 +11,11 @@ import java.util.Collection;
 public class ManyToManyBuilder<S, T> extends BaseModelBuilder implements ManyToManyConfigurationBuilder<S, T> {
 
     private final ManyToManyRelationship relationship;
+    private String hostMappingProperty;
 
-    public ManyToManyBuilder(ManyToManyRelationship relationship) {
+    public ManyToManyBuilder(ManyToManyRelationship relationship, String hostMappingProperty) {
         this.relationship = relationship;
+        this.hostMappingProperty = hostMappingProperty;
     }
 
     @Override
@@ -28,6 +30,12 @@ public class ManyToManyBuilder<S, T> extends BaseModelBuilder implements ManyToM
     @Override
     public ManyToManyConfigurationBuilder<S, T> mappedBy(Expression<T, Collection<S>> propertyExpression) {
         this.relationship.setMappedBy(parse(propertyExpression).property());
+        return this;
+    }
+
+    @Override
+    public ManyToManyConfigurationBuilder<S, T> isMapped() {
+        this.relationship.setMappedBy(hostMappingProperty);
         return this;
     }
 }
