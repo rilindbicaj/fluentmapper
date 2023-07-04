@@ -135,8 +135,6 @@ public final class DefaultFluentMapper implements FluentMapper {
             logger.info("Finished outputting mappings - have a nice day!");
         } catch (IOException e) {
             throw new FluentMapperException("Could not output mappings;", e);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
