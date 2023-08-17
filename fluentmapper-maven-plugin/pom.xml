@@ -54,14 +54,12 @@
             <groupId>com.bicicom.fluentmapper</groupId>
             <artifactId>fluentmapper-api</artifactId>
             <version>0.0.1</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.bicicom.fluentmapper</groupId>
             <artifactId>fluentmapper-provider</artifactId>
             <version>0.0.1</version>
-            <scope>runtime</scope>
         </dependency>
     </dependencies>
-
 </project>

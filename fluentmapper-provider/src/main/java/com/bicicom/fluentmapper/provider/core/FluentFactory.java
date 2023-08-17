@@ -14,9 +14,9 @@ import java.util.function.Consumer;
 
 public class FluentFactory {
 
-    public FluentMapper createConfigured(Consumer<MapperConfigurationBuilder> configApplier) {
+    public static FluentMapper createConfigured(Consumer<MapperConfigurationBuilder> configurationBuilderConsumer) {
         InternalMapperConfigurationBuilder configurationBuilder = InternalMapperConfigurationBuilder.create();
-        configApplier.accept(configurationBuilder);
+        configurationBuilderConsumer.accept(configurationBuilder);
 
         MapperConfiguration mapperConfiguration = configurationBuilder.build();
 

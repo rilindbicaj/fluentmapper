@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 public class CachedConcurrentExpressionParser extends ExpressionParser {
     private static final Logger logger = LoggerFactory.getLogger(CachedConcurrentExpressionParser.class);
+    private static final ClassLoader modelClassLoader = ModelClassloader.instance().getClassloader();
     private final ConcurrentMap<String, Map<String, MethodNode>> classLambdas = new ConcurrentHashMap<>();
 
     public CachedConcurrentExpressionParser(ExpressionClassExtractor classExtractor) {
@@ -61,10 +62,9 @@ public class CachedConcurrentExpressionParser extends ExpressionParser {
             final ClassReader classReader;
 
             try {
-                final InputStream classfileStream = ModelClassloader.instance()
-                        .getClassloader()
-                        .getResourceAsStream(
-                                containingClass.replace('.', '/') + ".class");
+                final InputStream classfileStream = modelClassLoader.getResourceAsStream(
+                        containingClass.replace('.', '/') + ".class"
+                );
 
                 if (classfileStream == null) {
                     throw new IOException("Could not create inputstream to class file " + containingClass);

@@ -2,13 +2,13 @@ package com.bicicom.fluentmapper.provider.builder;
 
 import com.bicicom.fluentmapper.expression.Expression;
 import com.bicicom.fluentmapper.model.builder.OneToManyConfigurationBuilder;
-import com.bicicom.fluentmapper.provider.model.mutable.OneToManyRelationship;
+import com.bicicom.fluentmapper.provider.model.OneToMany;
 
 public class OneToManyBuilder<S, T> extends BaseModelBuilder implements OneToManyConfigurationBuilder<S, T> {
 
-    private final OneToManyRelationship relationship;
+    private final OneToMany relationship;
 
-    OneToManyBuilder(OneToManyRelationship oneToManyRelationship) {
+    OneToManyBuilder(OneToMany oneToManyRelationship) {
         this.relationship = oneToManyRelationship;
     }
 

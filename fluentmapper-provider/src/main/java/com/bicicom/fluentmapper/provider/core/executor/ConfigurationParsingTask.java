@@ -1,22 +1,21 @@
 package com.bicicom.fluentmapper.provider.core.executor;
 
-import com.bicicom.fluentmapper.provider.model.ReadonlyEntityModel;
+import com.bicicom.fluentmapper.provider.model.Entity;
 import com.bicicom.fluentmapper.provider.parser.EntityModelParser;
 
-import java.util.Collection;
 import java.util.concurrent.Callable;
 
 public class ConfigurationParsingTask implements Callable<String> {
 
-    private final EntityModelParser parser = new EntityModelParser();
-    private final Collection<ReadonlyEntityModel> entityModels;
+    private final Iterable<Entity> entityModel;
 
-    public ConfigurationParsingTask(Collection<ReadonlyEntityModel> entityModels) {
-        this.entityModels = entityModels;
+    public ConfigurationParsingTask(Iterable<Entity> entityModel) {
+        this.entityModel = entityModel;
     }
 
     @Override
     public String call() {
-        return parser.parseModels(this.entityModels).getMappingsString();
+        var parser = EntityModelParser.getInstance();
+        return parser.parseModels(this.entityModel);
     }
 }

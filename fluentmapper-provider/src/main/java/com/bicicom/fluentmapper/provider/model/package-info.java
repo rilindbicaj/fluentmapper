@@ -1,8 +1,5 @@
-/**
- * Implementation of the different parts of the entity model. The grand idea
- * was for the readonly interfaces to be accessible from others libs as well for
- * their nefarious purposed, but in FluentMapper itself they only turned out to be
- * a hassle. Will probably be removed someday. Possibly, maybe.
- */
-
+@XmlSchema(namespace = "http://java.sun.com/xml/ns/persistence/orm", elementFormDefault = XmlNsForm.QUALIFIED)
 package com.bicicom.fluentmapper.provider.model;
+
+import jakarta.xml.bind.annotation.XmlNsForm;
+import jakarta.xml.bind.annotation.XmlSchema;

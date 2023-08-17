@@ -2,7 +2,7 @@ package com.bicicom.fluentmapper.model.builder;
 
 public interface PropertyConfigurationBuilder {
 
-    ColumnConfigurationBuilder toColumn(String column);
+    ColumnConfigurationBuilder toColumn(String columnName);
 
     PropertyConfigurationBuilder isOptional();
 

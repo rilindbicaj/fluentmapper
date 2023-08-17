@@ -1,14 +1,14 @@
 package com.bicicom.fluentmapper.provider.builder;
 
 import com.bicicom.fluentmapper.model.builder.ManyToOneConfigurationBuilder;
-import com.bicicom.fluentmapper.provider.model.mutable.JoinColumn;
-import com.bicicom.fluentmapper.provider.model.mutable.ManyToOneRelationship;
+import com.bicicom.fluentmapper.provider.model.JoinColumn;
+import com.bicicom.fluentmapper.provider.model.ManyToOne;
 
 public class ManyToOneBuilder<S, T> extends BaseModelBuilder implements ManyToOneConfigurationBuilder<S, T> {
 
-    private final ManyToOneRelationship relationship;
+    private final ManyToOne relationship;
 
-    ManyToOneBuilder(ManyToOneRelationship relationship) {
+    ManyToOneBuilder(ManyToOne relationship) {
         this.relationship = relationship;
     }
 
@@ -17,7 +17,7 @@ public class ManyToOneBuilder<S, T> extends BaseModelBuilder implements ManyToOn
         var joinColumn = new JoinColumn();
 
         joinColumn.setName(foreignKey);
-        relationship.setJoinColumn(joinColumn);
+        relationship.getJoinColumn().add(joinColumn);
 
         return this;
     }

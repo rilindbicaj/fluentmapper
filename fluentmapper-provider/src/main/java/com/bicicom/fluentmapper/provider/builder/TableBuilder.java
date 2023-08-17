@@ -1,7 +1,7 @@
 package com.bicicom.fluentmapper.provider.builder;
 
 import com.bicicom.fluentmapper.model.builder.TableConfigurationBuilder;
-import com.bicicom.fluentmapper.provider.model.mutable.Table;
+import com.bicicom.fluentmapper.provider.model.Table;
 
 public class TableBuilder implements TableConfigurationBuilder {
 

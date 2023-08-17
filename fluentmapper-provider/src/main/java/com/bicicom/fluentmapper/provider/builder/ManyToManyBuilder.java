@@ -3,17 +3,17 @@ package com.bicicom.fluentmapper.provider.builder;
 import com.bicicom.fluentmapper.expression.Expression;
 import com.bicicom.fluentmapper.model.builder.JoinTableConfigurationBuilder;
 import com.bicicom.fluentmapper.model.builder.ManyToManyConfigurationBuilder;
-import com.bicicom.fluentmapper.provider.model.mutable.JoinTable;
-import com.bicicom.fluentmapper.provider.model.mutable.ManyToManyRelationship;
+import com.bicicom.fluentmapper.provider.model.JoinTable;
+import com.bicicom.fluentmapper.provider.model.ManyToMany;
 
 import java.util.Collection;
 
 public class ManyToManyBuilder<S, T> extends BaseModelBuilder implements ManyToManyConfigurationBuilder<S, T> {
 
-    private final ManyToManyRelationship relationship;
-    private String hostMappingProperty;
+    private final ManyToMany relationship;
+    private final String hostMappingProperty;
 
-    public ManyToManyBuilder(ManyToManyRelationship relationship, String hostMappingProperty) {
+    public ManyToManyBuilder(ManyToMany relationship, String hostMappingProperty) {
         this.relationship = relationship;
         this.hostMappingProperty = hostMappingProperty;
     }

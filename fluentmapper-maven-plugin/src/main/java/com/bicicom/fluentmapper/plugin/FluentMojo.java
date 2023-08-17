@@ -1,6 +1,6 @@
 package com.bicicom.fluentmapper.plugin;
 
-import com.bicicom.fluentmapper.core.FluentMapper;
+import com.bicicom.fluentmapper.provider.core.FluentFactory;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -43,12 +43,14 @@ public class FluentMojo extends AbstractMojo {
             getLog().info("Exporting to classpath and to " + exportPath);
         }
 
-        FluentMapper.createConfigured(config -> {
+        FluentFactory.createConfigured(config -> {
             config.exportsTo(classpath + "/META-INF/orm.xml", exportPath)
                     .withMappingsPackage(mappingsPackage)
                     .withMappingsPath(classpath);
         }).execute();
-        
+
+        getLog().info("FluentMojo finished.");
+
     }
 
 }

@@ -1,32 +1,50 @@
 package com.bicicom.fluentmapper.provider.core.executor;
 
 import com.bicicom.fluentmapper.core.EntityMapper;
-import com.bicicom.fluentmapper.provider.model.ReadonlyEntityModel;
+import com.bicicom.fluentmapper.provider.core.exception.FluentMapperExecutionException;
+import com.bicicom.fluentmapper.provider.model.Entity;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.*;
 
 public final class TaskExecutor {
+
     private final ExecutorService executorService;
 
     public TaskExecutor() {
-        // Caching has proved more efficient than concurrency at least for smaller loads
-        this.executorService = Executors.newFixedThreadPool(1);
+        // TODO - check if a more CPU intensive, less reflection based solution can leverage the concurrent structure
+        // Caching has proved more efficient than concurrency at least for smaller loads. Also, because most of the
+        // bottleneck regarding JAXB is its initialization time, adding more threads is not gonna affect throughput
+        this.executorService = Executors.newFixedThreadPool(3);
     }
 
-    private static ReadonlyEntityModel tryGetModel(Future<ReadonlyEntityModel> builderTaskFuture) {
+    private static Entity tryGetModel(Future<Entity> builderTaskFuture) {
         try {
             return builderTaskFuture.get();
-        } catch (ExecutionException e) {
-            throw new RuntimeException("Should not happen", e);
-        } catch (InterruptedException e) {
-            throw new RuntimeException("Should not happen either", e);
+        } catch (ExecutionException | InterruptedException e) {
+            throw new FluentMapperExecutionException("Entity model configuration failed before it could be completed.", e);
         }
     }
 
-    public List<ReadonlyEntityModel> executeMappers(List<EntityMapper<?>> mappers) {
-        var tasks = mappers.stream()
+    private static String tryGetParsedMappings(Future<String> parsingTaskFuture) {
+        try {
+            return parsingTaskFuture.get();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new FluentMapperExecutionException(
+                    "Failed to get parsed entity model; the parsing task failed before it could be finished.", e);
+        }
+    }
+
+    /**
+     * Executes the mapping classes provided and configures the entity models according
+     * to their contents.
+     *
+     * @param mappings the user-defined mappings to process
+     * @return a list of {@link Entity} instances with fields set according to the provided mappings
+     */
+    public List<Entity> submitMappings(Collection<EntityMapper<?>> mappings) {
+        var tasks = mappings.stream()
                 .map(ConfigurationBuildingTask::new)
                 .toList();
         try {
@@ -35,25 +53,37 @@ public final class TaskExecutor {
                     .map(TaskExecutor::tryGetModel)
                     .toList();
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new FluentMapperExecutionException("Failed building entity models.", e);
         }
     }
 
-    public String parseModels(Collection<ReadonlyEntityModel> entityModels) {
+    /**
+     * Creates and executes {@link ConfigurationParsingTask} from the submitted entity models.
+     *
+     * @param entityModels a {@link Collection} of {@link Entity} instances with which to configure the parsing tasks
+     * @return the XML containing the joined output of all tasks.
+     */
+    public String submitModels(Collection<Entity> entityModels) {
         try {
-            return this.executorService.submit(new ConfigurationParsingTask(entityModels)).get();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            var task = new ConfigurationParsingTask(entityModels);
+
+            // TODO - check if this is actually concurrent
+            return this.executorService.invokeAll(List.of(task))
+                    .stream()
+                    .map(TaskExecutor::tryGetParsedMappings)
+                    .reduce("", String::concat);
+        } catch (RejectedExecutionException | InterruptedException e) {
+            throw new FluentMapperExecutionException("Could not parse entity models;", e);
         }
     }
 
+    // Check for correctness
     public void shutdown() {
         try {
             this.executorService.shutdown();
             this.executorService.awaitTermination(1, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
-            Thread.currentThread().stop();
-            throw new RuntimeException(e);
+            throw new FluentMapperExecutionException("Could not shut down task executor;", e);
         }
     }
 

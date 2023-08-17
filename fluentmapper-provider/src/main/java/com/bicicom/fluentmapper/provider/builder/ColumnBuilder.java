@@ -1,7 +1,7 @@
 package com.bicicom.fluentmapper.provider.builder;
 
 import com.bicicom.fluentmapper.model.builder.ColumnConfigurationBuilder;
-import com.bicicom.fluentmapper.provider.model.mutable.Column;
+import com.bicicom.fluentmapper.provider.model.Column;
 
 public class ColumnBuilder implements ColumnConfigurationBuilder {
 

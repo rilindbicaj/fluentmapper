@@ -3,9 +3,9 @@ package com.bicicom.fluentmapper.provider.core;
 import com.bicicom.fluentmapper.core.EntityMapper;
 import com.bicicom.fluentmapper.core.FluentMapper;
 import com.bicicom.fluentmapper.core.config.MapperConfiguration;
+import com.bicicom.fluentmapper.provider.core.exception.FluentMapperException;
 import com.bicicom.fluentmapper.provider.core.executor.TaskExecutor;
-import com.bicicom.fluentmapper.provider.core.executor.classfinder.EntityClassFinder;
-import com.bicicom.fluentmapper.provider.core.executor.classfinder.URLClassFinder;
+import com.bicicom.fluentmapper.provider.core.executor.classfinder.MappingClassFinder;
 import com.bicicom.fluentmapper.provider.core.loader.ModelClassloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-public final class DefaultFluentMapper implements FluentMapper {
+final class DefaultFluentMapper implements FluentMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(FluentMapper.class);
 
@@ -46,29 +46,35 @@ public final class DefaultFluentMapper implements FluentMapper {
     private final TaskExecutor executor;
     private String mappings = "";
 
-    DefaultFluentMapper(MapperConfiguration mapperConfiguration) {
+    public DefaultFluentMapper(MapperConfiguration mapperConfiguration) {
         this.mapperConfiguration = mapperConfiguration;
         this.executor = new TaskExecutor();
-        logger.debug("FluentMapper initialized");
+
+        ModelClassloader.initialize(mapperConfiguration.mappingsPath());
+
+        logger.debug("FluentMapper initialized.");
     }
 
     @Override
-    public void execute() {
+    public String execute() {
         logger.info("Locating mappings in package {}", mapperConfiguration.mappingsPackage());
 
-        List<Class<? extends EntityMapper<?>>> mappingClasses =
-                mapperConfiguration.pathStrategy().equals("path") ?
-                        this.findEntityClassesFromPath() : this.findAllEntityClassesFromPackage();
+        MappingClassFinder classFinder = MappingClassFinder.fromConfig(mapperConfiguration);
+
+        List<Class<? extends EntityMapper<?>>> mappingClasses = classFinder.findMappingClasses(
+                mapperConfiguration.mappingsPackage()
+        );
 
         var mappers = mappingClasses.stream()
                 .map(toMapper)
                 .peek(mapping -> logger.debug("Registered mapping {}", mapping.getClass().getName()))
                 .toList();
 
+        // Is this needed? Check above code
         logger.info("Located mappings {}", mappers.stream().map(entityMapper -> entityMapper.getClass().getSimpleName()).toList());
-        var models = this.executor.executeMappers(mappers);
+        var models = this.executor.submitMappings(mappers);
 
-        this.mappings = this.executor.parseModels(models);
+        this.mappings = this.executor.submitModels(models);
 
         if (this.mapperConfiguration.exports()) {
             this.exportMappings();
@@ -83,31 +89,12 @@ public final class DefaultFluentMapper implements FluentMapper {
         }
 
         this.executor.shutdown();
+
+        return this.mappings;
     }
 
     public String getMappings() {
         return this.mappings;
-    }
-
-    private List<Class<? extends EntityMapper<?>>> findAllEntityClassesFromPackage() {
-        try {
-            return EntityClassFinder.getClasses(
-                    mapperConfiguration.mappingsPackage()
-            );
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private List<Class<? extends EntityMapper<?>>> findEntityClassesFromPath() {
-        try {
-            return new URLClassFinder().findMappingClasses(
-                    mapperConfiguration.mappingsPath(),
-                    mapperConfiguration.mappingsPackage()
-            );
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /**

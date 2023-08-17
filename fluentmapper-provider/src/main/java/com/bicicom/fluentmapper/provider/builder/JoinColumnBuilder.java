@@ -2,7 +2,7 @@ package com.bicicom.fluentmapper.provider.builder;
 
 import com.bicicom.fluentmapper.expression.Expression;
 import com.bicicom.fluentmapper.model.builder.JoinColumnConfigurationBuilder;
-import com.bicicom.fluentmapper.provider.model.mutable.JoinColumn;
+import com.bicicom.fluentmapper.provider.model.JoinColumn;
 
 public class JoinColumnBuilder extends BaseModelBuilder implements JoinColumnConfigurationBuilder {
 
@@ -27,8 +27,8 @@ public class JoinColumnBuilder extends BaseModelBuilder implements JoinColumnCon
 
     @Override
     public JoinColumnConfigurationBuilder withLength(int length) {
-        this.joinColumn.setLength(length);
-        return this;
+        //TODO - remove this length param
+        throw new UnsupportedOperationException("Will deal with this later");
     }
 
     @Override

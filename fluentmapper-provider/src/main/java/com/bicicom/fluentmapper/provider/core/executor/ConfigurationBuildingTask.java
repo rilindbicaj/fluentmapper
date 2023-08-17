@@ -2,12 +2,12 @@ package com.bicicom.fluentmapper.provider.core.executor;
 
 import com.bicicom.fluentmapper.core.EntityMapper;
 import com.bicicom.fluentmapper.provider.builder.EntityModelBuilder;
-import com.bicicom.fluentmapper.provider.model.ReadonlyEntityModel;
+import com.bicicom.fluentmapper.provider.model.Entity;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.concurrent.Callable;
 
-public class ConfigurationBuildingTask<T> implements Callable<ReadonlyEntityModel> {
+public class ConfigurationBuildingTask<T> implements Callable<Entity> {
 
     private final EntityMapper<T> mapper;
     private final EntityModelBuilder<T> modelBuilder;
@@ -22,7 +22,7 @@ public class ConfigurationBuildingTask<T> implements Callable<ReadonlyEntityMode
     }
 
     @Override
-    public ReadonlyEntityModel call() {
+    public Entity call() {
         mapper.configure(this.modelBuilder);
         return modelBuilder.getModel();
     }

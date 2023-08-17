@@ -4,15 +4,15 @@ import com.bicicom.fluentmapper.expression.Expression;
 import com.bicicom.fluentmapper.model.builder.JoinColumnConfigurationBuilder;
 import com.bicicom.fluentmapper.model.builder.OneToOneConfigurationBuilder;
 import com.bicicom.fluentmapper.provider.expression.parser.ExpressionMetadata;
-import com.bicicom.fluentmapper.provider.model.mutable.JoinColumn;
-import com.bicicom.fluentmapper.provider.model.mutable.OneToOneRelationship;
+import com.bicicom.fluentmapper.provider.model.JoinColumn;
+import com.bicicom.fluentmapper.provider.model.OneToOne;
 
 public class OneToOneBuilder<S, T> extends BaseModelBuilder implements OneToOneConfigurationBuilder<S, T> {
 
     private final ExpressionMetadata builderContext;
-    private final OneToOneRelationship relationship;
+    private final OneToOne relationship;
 
-    OneToOneBuilder(OneToOneRelationship relationship, ExpressionMetadata builderContext) {
+    OneToOneBuilder(OneToOne relationship, ExpressionMetadata builderContext) {
         this.relationship = relationship;
         this.builderContext = builderContext;
     }
@@ -36,7 +36,7 @@ public class OneToOneBuilder<S, T> extends BaseModelBuilder implements OneToOneC
         var joinColumn = new JoinColumn();
         joinColumn.setName(foreignKeyProperty);
 
-        relationship.setJoinColumn(joinColumn);
+        relationship.getJoinColumn().add(joinColumn);
 
         return new JoinColumnBuilder(joinColumn);
     }
