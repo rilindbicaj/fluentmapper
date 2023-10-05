@@ -5,10 +5,7 @@ import com.bicicom.fluentmapper.provider.core.loader.ModelClassloader;
 import com.bicicom.fluentmapper.provider.expression.classextractor.ExpressionClassExtractor;
 import com.bicicom.fluentmapper.provider.expression.classextractor.SingletonExpressionClassExtractor;
 import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,17 +31,8 @@ public class CachedConcurrentExpressionParser extends ExpressionParser {
         super(classExtractor);
     }
 
-    public static ExpressionParser withCachedExtractor() {
+    public static ExpressionParser withExtractor() {
         return new CachedConcurrentExpressionParser(SingletonExpressionClassExtractor.instance());
-    }
-
-    static String getAccessedProperty(final MethodNode expression) throws ExpressionParseException {
-        for (AbstractInsnNode instruction : expression.instructions) {
-            if (instruction.getOpcode() == Opcodes.GETFIELD) {
-                return ((FieldInsnNode) instruction).name;
-            }
-        }
-        throw new ExpressionParseException("Could not parse expression. No field is returned by the parsed method " + expression.name);
     }
 
     @Override
@@ -79,21 +67,22 @@ public class CachedConcurrentExpressionParser extends ExpressionParser {
 
             classReader.accept(node, 0);
 
+            final Map<String, MethodNode> methodsWithNodesMap = node.methods.stream()
+                    .distinct()
+                    .collect(Collectors.toConcurrentMap(
+                            method -> method.name,
+                            methodNode -> methodNode,
+                            (a, b) -> a // ignores duplicate keys for now
+                    ));
             // Could go one step further and .filter() methods that start with 'lambda' but not worth it
-            this.classLambdas.putIfAbsent(
-                    containingClass,
-                    node.methods.stream()
-                            .collect(Collectors.toConcurrentMap(
-                                    method -> method.name,
-                                    methodNode -> methodNode
-                            )));
+            this.classLambdas.putIfAbsent(containingClass, methodsWithNodesMap);
 
             logger.debug("Cached expresions in class {}", containingClass);
         }
 
         expressionLambda = this.classLambdas.get(containingClass).get(lambdaSignature);
 
-        final String accessedProperty = getAccessedProperty(expressionLambda);
+        final String accessedProperty = findAccessedProperty(expressionLambda);
         final String[] classes = classExtractor.extract(serializedLambda, accessedProperty);
 
         return new ExpressionMetadata(accessedProperty, classes[0], classes[1]);

@@ -20,7 +20,7 @@ public class ExpressionParserTests {
 
     @BeforeEach
     public void reloadParser() {
-        parser = CachedConcurrentExpressionParser.withCachedExtractor();
+        parser = CachedConcurrentExpressionParser.withExtractor();
     }
 
     @Test
@@ -61,20 +61,26 @@ public class ExpressionParserTests {
 
     @Test
     @DisplayName("Should throw exception when invalid lambda is parsed")
-    public void givenInvalidLamda_whenParsed_shouldThrowParseException() {
+    public void givenInvalidLambda_whenParsed_shouldThrowParseException() {
         assertThrows(ExpressionParseException.class, () -> parser.parse(INVALID_LAMBDA));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when invalid method reference is parsed")
+    public void givenInvalidMethodReference_whenParsed_shouldThrowParseException() {
+        assertThrows(ExpressionParseException.class, () -> parser.parse(INVALID_METHOD_REFERENCE));
     }
 
     @Nested
     final class CachedConcurrentExpressionParserTests {
 
-        private static final String NO_FIELD_RETURNED_MESSAGE = "Could not parse expression. No field is returned by the parsed method ";
+        private static final String NO_FIELD_RETURNED_MESSAGE = "No field access instruction found in method node ";
 
         private ExpressionParser parser;
 
         @BeforeEach
         public void reloadParser() {
-            parser = CachedConcurrentExpressionParser.withCachedExtractor();
+            parser = CachedConcurrentExpressionParser.withExtractor();
         }
 
         @Test

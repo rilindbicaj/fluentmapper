@@ -1,6 +1,7 @@
 package com.bicicom.fluentmapper.provider.expression.classextractor;
 
 import com.bicicom.fluentmapper.provider.core.loader.ModelClassloader;
+import com.bicicom.fluentmapper.provider.expression.parser.ExpressionParseException;
 
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Field;
@@ -12,7 +13,15 @@ public final class SingletonExpressionClassExtractor implements ExpressionClassE
 
     private static final ExpressionClassExtractor parser = new SingletonExpressionClassExtractor();
     private static final ModelClassloader modelClassloader = ModelClassloader.instance();
+
+    /**
+     * Regex pattern which matches JVM notation for method return types.
+     */
     private final Pattern bracketLPattern = Pattern.compile("(\\(L|\\)L)");
+
+    /**
+     * Regex pattern which quite simply matches divisors. Used to separate classnames.
+     */
     private final Pattern divisorPattern = Pattern.compile("/");
 
     private SingletonExpressionClassExtractor() {
@@ -25,30 +34,35 @@ public final class SingletonExpressionClassExtractor implements ExpressionClassE
         return parser;
     }
 
-    private String getAccessedPropertyTypeName(String property, String containingClass) throws Exception {
-        final Field field = Class.forName(containingClass, false, modelClassloader.getClassloader())
-                .getDeclaredField(property);
+    private String getAccessedPropertyTypeName(String property, String containingClass) {
+        final Field propertyField;
 
-        if (Collection.class.isAssignableFrom(field.getType())) {
-            return ((ParameterizedType) field
+        try {
+            propertyField = Class.forName(containingClass, false, modelClassloader.getClassloader())
+                    .getDeclaredField(property);
+        } catch (ClassNotFoundException e) {
+            throw new ExpressionParseException(
+                    "Could not crack class of property " + property + ". Containing class "
+                            + containingClass + " is not present in the classloader.");
+        } catch (NoSuchFieldException e) {
+            throw new ExpressionParseException("Property " + property + " is not contained in class " + containingClass);
+        }
+
+        if (Collection.class.isAssignableFrom(propertyField.getType())) {
+            return ((ParameterizedType) propertyField
                     .getGenericType())
                     .getActualTypeArguments()[0]
                     .getTypeName();
         }
 
-        return field.getType().getTypeName();
+        return propertyField.getType().getTypeName();
     }
 
     private String[] parseMethodReference(final String refClass, final String property) {
         final String[] values = new String[2];
 
         values[0] = divisorPattern.matcher(refClass).replaceAll(".");
-
-        try {
-            values[1] = getAccessedPropertyTypeName(property, values[0]);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        values[1] = getAccessedPropertyTypeName(property, values[0]);
 
         return values;
     }
@@ -64,8 +78,8 @@ public final class SingletonExpressionClassExtractor implements ExpressionClassE
      * * which is highly unlikely. It can also break if the compiler doesn't label lambdas with
      * * this prefix.</p>
      *
-     * @param implMethodName
-     * @return
+     * @param implMethodName the compiler-generated name of the method
+     * @return true if the method is a lambda expression, false otherwise
      */
 
     private boolean isLambda(final String implMethodName) {
@@ -74,18 +88,18 @@ public final class SingletonExpressionClassExtractor implements ExpressionClassE
 
     private String[] parseLambda(final String implMethodSignature, final String property) {
         final String[] values;
+        final String modelClassname;
+        final String propertyClassname;
 
         String bracketLess = bracketLPattern.matcher(implMethodSignature).replaceAll("");
-        String divisorless = divisorPattern.matcher(bracketLess).replaceAll(".");
+        String divisorLess = divisorPattern.matcher(bracketLess).replaceAll(".");
 
-        values = divisorless.split(";");
-        try {
-            values[1] = getAccessedPropertyTypeName(property, values[0]);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        values = divisorLess.split(";");
 
-        return values;
+        modelClassname = values[0];
+        propertyClassname = getAccessedPropertyTypeName(property, values[0]);
+
+        return new String[]{modelClassname, propertyClassname};
     }
 
     @Override

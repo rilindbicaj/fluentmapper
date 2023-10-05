@@ -13,7 +13,7 @@ abstract class BaseModelBuilder {
     private static final ExpressionParser parser;
 
     static {
-        parser = CachedConcurrentExpressionParser.withCachedExtractor();
+        parser = CachedConcurrentExpressionParser.withExtractor();
     }
 
     protected BaseModelBuilder() {
