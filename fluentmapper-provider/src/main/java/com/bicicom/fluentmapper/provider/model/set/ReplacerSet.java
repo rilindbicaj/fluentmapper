@@ -9,7 +9,7 @@ import java.util.HashSet;
  *
  * @param <E>
  */
-public class ModelSet<E> extends HashSet<E> {
+public class ReplacerSet<E> extends HashSet<E> {
 
     @Override
     public boolean add(E element) {

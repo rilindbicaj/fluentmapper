@@ -1,6 +1,6 @@
 package com.bicicom.fluentmapper.provider.model;
 
-import com.bicicom.fluentmapper.provider.model.set.ModelSet;
+import com.bicicom.fluentmapper.provider.model.set.ReplacerSet;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
@@ -58,7 +58,7 @@ public class Attributes {
 
     public Set<Id> getId() {
         if (id == null) {
-            id = new ModelSet<>();
+            id = new ReplacerSet<>();
         }
         return this.id;
     }
@@ -73,42 +73,42 @@ public class Attributes {
 
     public Set<Basic> getBasic() {
         if (basic == null) {
-            basic = new ModelSet<>();
+            basic = new ReplacerSet<>();
         }
         return this.basic;
     }
 
     public Set<Version> getVersion() {
         if (version == null) {
-            version = new ModelSet<>();
+            version = new ReplacerSet<>();
         }
         return this.version;
     }
 
     public Set<ManyToOne> getManyToOne() {
         if (manyToOne == null) {
-            manyToOne = new ModelSet<>();
+            manyToOne = new ReplacerSet<>();
         }
         return this.manyToOne;
     }
 
     public Set<OneToMany> getOneToMany() {
         if (oneToMany == null) {
-            oneToMany = new ModelSet<>();
+            oneToMany = new ReplacerSet<>();
         }
         return this.oneToMany;
     }
 
     public Set<OneToOne> getOneToOne() {
         if (oneToOne == null) {
-            oneToOne = new ModelSet<>();
+            oneToOne = new ReplacerSet<>();
         }
         return this.oneToOne;
     }
 
     public Set<ManyToMany> getManyToMany() {
         if (manyToMany == null) {
-            manyToMany = new ModelSet<>();
+            manyToMany = new ReplacerSet<>();
         }
         return this.manyToMany;
     }
