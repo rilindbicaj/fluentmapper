@@ -13,10 +13,7 @@ public class ReplacerSet<E> extends HashSet<E> {
 
     @Override
     public boolean add(E element) {
-        if (this.contains(element)) {
-            this.remove(element);
-            return super.add(element);
-        }
+        this.remove(element);
         return super.add(element);
     }
 
