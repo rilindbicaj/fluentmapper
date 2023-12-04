@@ -2,6 +2,7 @@ package com.bicicom.fluentmapper.provider.core.loader;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -31,7 +32,7 @@ public class ModelClassloader {
 
         var currentClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            URL[] urls = new URL[]{new URL("file:///" + classpath + "/")};
+            URL[] urls = new URL[]{URI.create("file:///" + classpath + "/").toURL()};
             modelClassloader.classLoader = URLClassLoader.newInstance(urls, currentClassLoader);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
