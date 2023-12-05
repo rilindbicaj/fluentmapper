@@ -18,12 +18,7 @@ public class JoinColumn {
     protected Boolean unique;
     @XmlAttribute(name = "nullable")
     protected Boolean nullable;
-    @XmlAttribute(name = "insertable")
-    protected Boolean insertable;
-    @XmlAttribute(name = "updatable")
-    protected Boolean updatable;
-    @XmlAttribute(name = "column-definition")
-    protected String columnDefinition;
+
     @XmlAttribute(name = "table")
     protected String table;
 
@@ -35,52 +30,16 @@ public class JoinColumn {
         this.name = value;
     }
 
-    public String getReferencedColumnName() {
-        return referencedColumnName;
-    }
-
     public void setReferencedColumnName(String value) {
         this.referencedColumnName = value;
-    }
-
-    public Boolean isUnique() {
-        return unique;
     }
 
     public void setUnique(Boolean value) {
         this.unique = value;
     }
 
-    public Boolean isNullable() {
-        return nullable;
-    }
-
     public void setNullable(Boolean value) {
         this.nullable = value;
-    }
-
-    public Boolean isInsertable() {
-        return insertable;
-    }
-
-    public void setInsertable(Boolean value) {
-        this.insertable = value;
-    }
-
-    public Boolean isUpdatable() {
-        return updatable;
-    }
-
-    public void setUpdatable(Boolean value) {
-        this.updatable = value;
-    }
-
-    public String getColumnDefinition() {
-        return columnDefinition;
-    }
-
-    public void setColumnDefinition(String value) {
-        this.columnDefinition = value;
     }
 
     public String getTable() {
