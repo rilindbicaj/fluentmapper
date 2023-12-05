@@ -10,13 +10,7 @@
     </parent>
 
     <artifactId>fluentmapper-core</artifactId>
-
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
+    
     <dependencies>
         <dependency>
             <groupId>com.bicicom.fluentmapper</groupId>
@@ -27,7 +21,7 @@
         <dependency>
             <groupId>com.bicicom.fluentmapper</groupId>
             <artifactId>fluentmapper-provider</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

@@ -11,11 +11,6 @@
 
     <artifactId>fluentmapper-provider</artifactId>
 
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>com.bicicom.fluentmapper</groupId>
@@ -32,12 +27,12 @@
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>9.4</version>
+            <version>9.5</version>
         </dependency>
         <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm-tree</artifactId>
-            <version>9.4</version>
+            <version>9.5</version>
         </dependency>
         <dependency>
             <groupId>jakarta.xml.bind</groupId>

@@ -32,7 +32,7 @@ public class ModelClassloader {
 
         var currentClassLoader = Thread.currentThread().getContextClassLoader();
         try {
-            URL[] urls = new URL[]{URI.create("file:///" + classpath + "/").toURL()};
+            URL[] urls = new URL[]{URI.create("file:///" + classpath.replace('\\', '/') + "/").toURL()};
             modelClassloader.classLoader = URLClassLoader.newInstance(urls, currentClassLoader);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
