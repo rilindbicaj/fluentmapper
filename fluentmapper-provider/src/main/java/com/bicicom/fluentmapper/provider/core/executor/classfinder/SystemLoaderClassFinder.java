@@ -51,12 +51,7 @@ public final class SystemLoaderClassFinder implements MappingClassFinder {
     public List<Class<? extends EntityMapper<?>>> findMappingClasses(String packageName) {
         String path = packageName.replace('.', '/');
 
-        List<String> definedPackages = Arrays.stream(this.classLoader.getDefinedPackages())
-                .map(Package::getName)
-                .toList();
-
         logger.info("Path to search for is {}", path);
-        logger.info("Defined packages are {}", definedPackages);
 
         var resources = this.classLoader.resources(path);
 
@@ -77,9 +72,13 @@ public final class SystemLoaderClassFinder implements MappingClassFinder {
                 .flatMap(List::stream)
                 .toList();
 
-        return classes.stream()
+        List<Class<? extends EntityMapper<?>>> mappingClasses = classes.stream()
                 .filter(EntityMapper.class::isAssignableFrom)
                 .toList();
+
+        logger.info("Located mapping files {}", mappingClasses.stream().map(Class::getSimpleName).toList());
+
+        return mappingClasses;
     }
 
     @SuppressWarnings("unchecked")
