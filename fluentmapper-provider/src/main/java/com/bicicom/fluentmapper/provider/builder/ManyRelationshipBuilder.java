@@ -23,7 +23,7 @@ public class ManyRelationshipBuilder<T, S> extends BaseModelBuilder implements M
 
     @Override
     public OneToManyConfigurationBuilder<S, T> withOne(Expression<T, S> propertyExpression) {
-        var parsedExpression = parse(propertyExpression);
+        var parsedExpression = expressionParser.parse(propertyExpression);
         var relationship = new OneToMany();
 
         relationship.setName(builderContext.property());
@@ -39,7 +39,7 @@ public class ManyRelationshipBuilder<T, S> extends BaseModelBuilder implements M
 
     @Override
     public ManyToManyConfigurationBuilder<S, T> withMany(Expression<T, Collection<S>> propertyExpression) {
-        var parsedExpression = parse(propertyExpression);
+        var parsedExpression = expressionParser.parse(propertyExpression);
         var relationship = new ManyToMany();
 
         relationship.setName(builderContext.property());

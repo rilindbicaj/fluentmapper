@@ -1,6 +1,6 @@
 package com.bicicom.fluentmapper.provider.core.executor.classfinder;
 
-import com.bicicom.fluentmapper.provider.core.loader.ModelClassloader;
+import com.bicicom.fluentmapper.provider.core.classloader.ModelClassLoader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,13 +15,13 @@ public class URLClassFinderTests {
 
     @BeforeEach
     public void initializeModelClassloader() {
-        ModelClassloader.initialize(CLASSPATH);
+        //ModelClassLoader.initialize(CLASSPATH);
     }
 
     @Test
     @DisplayName("Should find all mapping classes in given correct path and package")
     public void givenPath_containsMappings_shouldFindAllMappingClasses() {
-        var classFinder = new SystemLoaderClassFinder(ModelClassloader.instance().getClassloader());
+        var classFinder = new SystemLoaderClassFinder(ModelClassLoader.INSTANCE.getClassLoader());
 
         var list = classFinder.findMappingClasses(MAPPINGS_PACKAGE);
         Assertions.assertEquals(2, list.size());

@@ -19,7 +19,7 @@ public class OneToOneBuilder<S, T> extends BaseModelBuilder implements OneToOneC
 
     @Override
     public OneToOneConfigurationBuilder<S, T> mappedBy(Expression<T, S> propertyExpression) {
-        var mappedProperty = parse(propertyExpression).property();
+        var mappedProperty = expressionParser.parse(propertyExpression).property();
         relationship.setMappedBy(mappedProperty);
 
         return this;

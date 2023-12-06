@@ -1,6 +1,6 @@
 package com.bicicom.fluentmapper.provider.expression.classextractor;
 
-import com.bicicom.fluentmapper.provider.core.loader.ModelClassloader;
+import com.bicicom.fluentmapper.provider.core.classloader.ModelClassLoader;
 import com.bicicom.fluentmapper.provider.expression.parser.ExpressionParseException;
 
 import java.lang.invoke.SerializedLambda;
@@ -9,36 +9,30 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
-public final class SingletonExpressionClassExtractor implements ExpressionClassExtractor {
+public enum RegexExpressionClassExtractor implements ExpressionClassExtractor {
 
-    private static final ExpressionClassExtractor parser = new SingletonExpressionClassExtractor();
-    private static final ModelClassloader modelClassloader = ModelClassloader.instance();
+    INSTANCE;
 
     /**
      * Regex pattern which matches JVM notation for method return types.
      */
     private final Pattern bracketLPattern = Pattern.compile("(\\(L|\\)L)");
-
     /**
      * Regex pattern which quite simply matches divisors. Used to separate classnames.
      */
     private final Pattern divisorPattern = Pattern.compile("/");
-
-    private SingletonExpressionClassExtractor() {
-        if (parser != null) {
-            throw new IllegalStateException(getClass().getName() + " instance already exists.");
-        }
-    }
-
-    public static ExpressionClassExtractor instance() {
-        return parser;
-    }
+    /**
+     * The classloader to be used for loading model classes.
+     */
+    private final ModelClassLoader modelClassLoader = ModelClassLoader.INSTANCE;
 
     private String getAccessedPropertyTypeName(String property, String containingClass) {
         final Field propertyField;
 
         try {
-            propertyField = Class.forName(containingClass, false, modelClassloader.getClassloader())
+            propertyField = this.modelClassLoader
+                    .getClassLoader()
+                    .loadClass(containingClass)
                     .getDeclaredField(property);
         } catch (ClassNotFoundException e) {
             throw new ExpressionParseException(

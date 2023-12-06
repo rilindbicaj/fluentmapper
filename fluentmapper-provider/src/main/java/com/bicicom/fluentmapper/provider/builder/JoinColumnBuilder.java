@@ -14,7 +14,7 @@ public class JoinColumnBuilder extends BaseModelBuilder implements JoinColumnCon
 
     @Override
     public <S> JoinColumnConfigurationBuilder referencing(Expression<S, ?> propertyExpression) {
-        var columnName = parse(propertyExpression).property();
+        var columnName = expressionParser.parse(propertyExpression).property();
         this.joinColumn.setReferencedColumnName(columnName);
         return this;
     }

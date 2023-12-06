@@ -29,7 +29,7 @@ public class EntityModelBuilder<S> extends BaseModelBuilder implements ModelBuil
 
     @Override
     public <T> KeyConfigurationBuilder<S, T> hasKey(Expression<S, T> expression) {
-        var metadata = parse(expression);
+        var metadata = expressionParser.parse(expression);
         var key = new Id();
         key.setName(metadata.property());
 
@@ -40,7 +40,7 @@ public class EntityModelBuilder<S> extends BaseModelBuilder implements ModelBuil
 
     @Override
     public PropertyConfigurationBuilder property(Expression<S, ?> expression) {
-        var metadata = parse(expression);
+        var metadata = expressionParser.parse(expression);
         var basicAttribute = new Basic();
         basicAttribute.setName(metadata.property());
 
@@ -62,14 +62,14 @@ public class EntityModelBuilder<S> extends BaseModelBuilder implements ModelBuil
 
     @Override
     public <T> OneRelationshipConfigurationBuilder<T, S> hasOne(Expression<S, T> expression) {
-        var parsedExpression = parse(expression);
+        var parsedExpression = expressionParser.parse(expression);
 
         return new OneRelationshipBuilder<>(entityModel, parsedExpression);
     }
 
     @Override
     public <T> ManyRelationshipConfigurationBuilder<T, S> hasMany(Expression<S, Collection<T>> expression) {
-        var parsedExpression = parse(expression);
+        var parsedExpression = expressionParser.parse(expression);
 
         return new ManyRelationshipBuilder<>(entityModel, parsedExpression);
     }

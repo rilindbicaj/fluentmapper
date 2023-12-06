@@ -1,7 +1,7 @@
 package com.bicicom.fluentmapper.provider.model.bootstrapper;
 
+import com.bicicom.fluentmapper.provider.core.classloader.ModelClassLoader;
 import com.bicicom.fluentmapper.provider.core.exception.FluentMapperException;
-import com.bicicom.fluentmapper.provider.core.loader.ModelClassloader;
 import com.bicicom.fluentmapper.provider.model.Basic;
 import com.bicicom.fluentmapper.provider.model.Entity;
 import com.bicicom.fluentmapper.provider.model.Id;
@@ -18,7 +18,7 @@ import java.util.List;
 
 public final class EntityModelBootstrapper {
 
-    private static final ClassLoader modelClassLoader = ModelClassloader.instance().getClassloader();
+    private static final ModelClassLoader modelClassLoader = ModelClassLoader.INSTANCE;
     private final Class<?> entityClass;
     private final String qualifiedClassName;
 
@@ -36,7 +36,7 @@ public final class EntityModelBootstrapper {
 
     public static EntityModelBootstrapper forClass(String qualifiedClassName) {
         try {
-            Class<?> entityClass = Class.forName(qualifiedClassName, false, modelClassLoader);
+            Class<?> entityClass = modelClassLoader.getClassLoader().loadClass(qualifiedClassName);
             return new EntityModelBootstrapper(entityClass);
         } catch (ClassNotFoundException e) {
             throw new FluentMapperException("Could not create bootstrapper for model class " + qualifiedClassName, e);

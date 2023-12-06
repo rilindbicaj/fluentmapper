@@ -29,7 +29,7 @@ public class ManyToManyBuilder<S, T> extends BaseModelBuilder implements ManyToM
 
     @Override
     public ManyToManyConfigurationBuilder<S, T> mappedBy(Expression<T, Collection<S>> propertyExpression) {
-        this.relationship.setMappedBy(parse(propertyExpression).property());
+        this.relationship.setMappedBy(expressionParser.parse(propertyExpression).property());
         return this;
     }
 

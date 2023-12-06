@@ -1,26 +1,16 @@
 package com.bicicom.fluentmapper.provider.builder;
 
 import com.bicicom.fluentmapper.expression.Expression;
-import com.bicicom.fluentmapper.provider.expression.parser.CachedConcurrentExpressionParser;
+import com.bicicom.fluentmapper.provider.expression.parser.CachingConcurrentExpressionParser;
 import com.bicicom.fluentmapper.provider.expression.parser.ExpressionMetadata;
 import com.bicicom.fluentmapper.provider.expression.parser.ExpressionParser;
 
 abstract class BaseModelBuilder {
 
     /**
-     * Ensures all model builders use the same parser to utilize caching
+     * The parser to be used for extracting {@link ExpressionMetadata} objects from passed {@link Expression} objects.
+     * A single instance is kept, in order to utilize the caching mechanism.
      */
-    private static final ExpressionParser parser;
-
-    static {
-        parser = CachedConcurrentExpressionParser.withExtractor();
-    }
-
-    protected BaseModelBuilder() {
-    }
-
-    protected <S, T> ExpressionMetadata parse(Expression<S, T> expression) {
-        return parser.parse(expression);
-    }
+    protected static final ExpressionParser expressionParser = new CachingConcurrentExpressionParser();
 
 }

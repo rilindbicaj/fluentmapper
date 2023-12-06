@@ -3,10 +3,10 @@ package com.bicicom.fluentmapper.provider.core;
 import com.bicicom.fluentmapper.core.EntityMapper;
 import com.bicicom.fluentmapper.core.FluentMapper;
 import com.bicicom.fluentmapper.core.config.MapperConfiguration;
+import com.bicicom.fluentmapper.provider.core.classloader.ModelClassLoader;
 import com.bicicom.fluentmapper.provider.core.exception.FluentMapperException;
 import com.bicicom.fluentmapper.provider.core.executor.TaskExecutor;
 import com.bicicom.fluentmapper.provider.core.executor.classfinder.MappingClassFinder;
-import com.bicicom.fluentmapper.provider.core.loader.ModelClassloader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +15,10 @@ import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -22,7 +26,6 @@ import java.util.function.Function;
 final class DefaultFluentMapper implements FluentMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(FluentMapper.class);
-
     private static final Function<Class<? extends EntityMapper<?>>, EntityMapper<?>> toMapper = (mappingClass) -> {
         try {
             Constructor<?> constructor = Arrays.stream(mappingClass.getDeclaredConstructors())
@@ -49,9 +52,7 @@ final class DefaultFluentMapper implements FluentMapper {
     public DefaultFluentMapper(MapperConfiguration mapperConfiguration) {
         this.mapperConfiguration = mapperConfiguration;
         this.executor = new TaskExecutor();
-
-        ModelClassloader.initialize(mapperConfiguration.mappingsPath());
-
+        ModelClassLoader.INSTANCE.setClassLoader(this.initializeModelClassLoader());
         logger.debug("FluentMapper initialized.");
     }
 
@@ -70,8 +71,6 @@ final class DefaultFluentMapper implements FluentMapper {
                 .peek(mapping -> logger.debug("Registered mapping {}", mapping.getClass().getName()))
                 .toList();
 
-        // Is this needed? Check above code
-        logger.info("Located mappings {}", mappers.stream().map(entityMapper -> entityMapper.getClass().getSimpleName()).toList());
         var models = this.executor.submitMappings(mappers);
 
         this.mappings = this.executor.submitModels(models);
@@ -82,7 +81,7 @@ final class DefaultFluentMapper implements FluentMapper {
 
         if (this.mapperConfiguration.pathStrategy().equals("path")) {
             try {
-                ModelClassloader.instance().release();
+                ((URLClassLoader) ModelClassLoader.INSTANCE.getClassLoader()).close();
             } catch (IOException e) {
                 logger.warn("Could not release classloader resources", e);
             }
@@ -95,6 +94,33 @@ final class DefaultFluentMapper implements FluentMapper {
 
     public String getMappings() {
         return this.mappings;
+    }
+
+    /**
+     * Initializes the classloader to be used by the {@link ModelClassLoader}, depending on the strategy used for
+     * locating the mapping files.
+     *
+     * @return a classloader capable of loading model classes.
+     */
+    private ClassLoader initializeModelClassLoader() {
+        final String pathStrategy = this.mapperConfiguration.pathStrategy();
+        final String classpath = this.mapperConfiguration.mappingsPath();
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+
+        if (pathStrategy.equals("package")) {
+            return contextClassLoader;
+        }
+
+        if (classpath.isBlank()) {
+            throw new FluentMapperException("Failed to initialize classloader for model classes; invalid classpath given - " + classpath);
+        }
+
+        try {
+            URL[] urls = new URL[]{URI.create("file:///" + classpath.replace('\\', '/') + "/").toURL()};
+            return URLClassLoader.newInstance(urls, contextClassLoader);
+        } catch (MalformedURLException e) {
+            throw new FluentMapperException("Failed to initialize classloader for model classes; could not convert classpath to URL.", e);
+        }
     }
 
     /**

@@ -1,7 +1,9 @@
 package com.bicicom.fluentmapper.provider.expression.parser;
 
 import com.bicicom.fluentmapper.expression.Expression;
+import com.bicicom.fluentmapper.provider.core.classloader.ModelClassLoader;
 import com.bicicom.fluentmapper.provider.expression.classextractor.ExpressionClassExtractor;
+import com.bicicom.fluentmapper.provider.expression.classextractor.RegexExpressionClassExtractor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -16,11 +18,8 @@ import java.util.stream.StreamSupport;
 
 public abstract class ExpressionParser {
 
-    protected final ExpressionClassExtractor classExtractor;
-
-    protected ExpressionParser(ExpressionClassExtractor classExtractor) {
-        this.classExtractor = classExtractor;
-    }
+    protected final ExpressionClassExtractor classExtractor = RegexExpressionClassExtractor.INSTANCE;
+    protected final ModelClassLoader modelClassLoader = ModelClassLoader.INSTANCE;
 
     /**
      * Extracts the {@code SerializedLambda} instance returned from a serialized lambda expression's
@@ -31,24 +30,31 @@ public abstract class ExpressionParser {
      * @param expression the {@code Expression} instance
      * @return the {@code SerializedLambda} instance with metadata on the input expression
      */
-
-    protected static SerializedLambda toSerializedLambda(Expression<?, ?> expression) {
+    protected static SerializedLambda toSerializedLambda(final Expression<?, ?> expression) {
         try {
             final Method writeReplaceMethod = expression.getClass().getDeclaredMethod("writeReplace");
             writeReplaceMethod.setAccessible(true);
 
             return (SerializedLambda) writeReplaceMethod.invoke(expression);
         } catch (ReflectiveOperationException e) {
-            throw new ExpressionParseException("Could not extract SerializedLambda", e);
+            throw new ExpressionParseException("Could not extract SerializedLambda from the provided expression;", e);
         }
     }
 
-    protected static String findAccessedProperty(final MethodNode expression) throws ExpressionParseException {
-        var node = StreamSupport.stream(expression.instructions.spliterator(), false)
+    /**
+     * Given a {@link MethodNode} representation of an {@link Expression}, finds the first class property being accessed
+     * inside it's bytecode instructions, if any.
+     *
+     * @param expressionNode the {@link MethodNode} whose instructions should be checked
+     * @return a String representing the accessed property's name
+     * @throws ExpressionParseException if the expression has no field access instruction present.
+     */
+    protected static String findAccessedProperty(final MethodNode expressionNode) throws ExpressionParseException {
+        var node = StreamSupport.stream(expressionNode.instructions.spliterator(), false)
                 .filter(instruction -> instruction.getOpcode() == Opcodes.GETFIELD)
                 .findFirst()
                 .orElseThrow(() -> new ExpressionParseException(
-                        "No field access instruction found in method node " + expression.name
+                        "No field access instruction found in method node " + expressionNode.name
                 ));
         return ((FieldInsnNode) node).name;
     }

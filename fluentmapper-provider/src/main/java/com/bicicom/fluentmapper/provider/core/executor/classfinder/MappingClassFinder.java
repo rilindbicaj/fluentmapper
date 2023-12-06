@@ -2,8 +2,8 @@ package com.bicicom.fluentmapper.provider.core.executor.classfinder;
 
 import com.bicicom.fluentmapper.core.EntityMapper;
 import com.bicicom.fluentmapper.core.config.MapperConfiguration;
+import com.bicicom.fluentmapper.provider.core.classloader.ModelClassLoader;
 import com.bicicom.fluentmapper.provider.core.exception.FluentMapperException;
-import com.bicicom.fluentmapper.provider.core.loader.ModelClassloader;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public sealed interface MappingClassFinder permits URLClassFinder, SystemLoaderC
     static MappingClassFinder fromConfig(MapperConfiguration configuration) {
         return switch (configuration.pathStrategy()) {
             case "package" -> new SystemLoaderClassFinder();
-            case "path" -> new SystemLoaderClassFinder(ModelClassloader.instance().getClassloader());
+            case "path" -> new SystemLoaderClassFinder(ModelClassLoader.INSTANCE.getClassLoader());
             default -> throw new FluentMapperException("Invalid path strategy " + configuration.pathStrategy());
         };
     }

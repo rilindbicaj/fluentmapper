@@ -14,7 +14,7 @@ public class OneToManyBuilder<S, T> extends BaseModelBuilder implements OneToMan
 
     @Override
     public OneToManyConfigurationBuilder<S, T> mappedBy(Expression<T, S> propertyExpression) {
-        relationship.setMappedBy(parse(propertyExpression).property());
+        relationship.setMappedBy(expressionParser.parse(propertyExpression).property());
         return this;
     }
 }

@@ -20,7 +20,7 @@ public class ExpressionParserTests {
 
     @BeforeEach
     public void reloadParser() {
-        parser = CachedConcurrentExpressionParser.withExtractor();
+        parser = new CachingConcurrentExpressionParser();
     }
 
     @Test
@@ -72,7 +72,7 @@ public class ExpressionParserTests {
     }
 
     @Nested
-    final class CachedConcurrentExpressionParserTests {
+    final class CachingConcurrentExpressionParserTests {
 
         private static final String NO_FIELD_RETURNED_MESSAGE = "No field access instruction found in method node ";
 
@@ -80,7 +80,7 @@ public class ExpressionParserTests {
 
         @BeforeEach
         public void reloadParser() {
-            parser = CachedConcurrentExpressionParser.withExtractor();
+            parser = new CachingConcurrentExpressionParser();
         }
 
         @Test

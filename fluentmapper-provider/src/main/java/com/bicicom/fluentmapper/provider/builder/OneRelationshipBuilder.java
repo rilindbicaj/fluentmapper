@@ -27,7 +27,7 @@ public class OneRelationshipBuilder<S, T> extends BaseModelBuilder implements On
 
     @Override
     public OneToOneConfigurationBuilder<T, S> withOne(Expression<S, T> expression) {
-        var parsedExpression = parse(expression);
+        var parsedExpression = expressionParser.parse(expression);
         var relationship = new OneToOne();
         relationship.setName(builderContext.property());
         relationship.setTargetEntity(parsedExpression.sourceClass());
@@ -56,7 +56,7 @@ public class OneRelationshipBuilder<S, T> extends BaseModelBuilder implements On
     public ManyToOneConfigurationBuilder<T, S> withMany(Expression<S, Collection<T>> expression) {
         var relationship = new ManyToOne();
         relationship.setName(builderContext.property());
-        relationship.setTargetEntity(parse(expression).sourceClass());
+        relationship.setTargetEntity(expressionParser.parse(expression).sourceClass());
 
         entityModel.getAttributes()
                 .getManyToOne()
