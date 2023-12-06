@@ -15,8 +15,7 @@ public class DefaultFluentMapperTests {
         FluentMapper fluentMapper = FluentFactory.createConfigured(config -> {
             config.withMappingsPackage(MAPPINGS_PACKAGE);
         });
-
-        System.out.println(fluentMapper.execute());
+        fluentMapper.execute();
     }
 
 }
