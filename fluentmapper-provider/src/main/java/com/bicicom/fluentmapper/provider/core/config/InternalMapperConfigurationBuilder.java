@@ -5,11 +5,9 @@ import com.bicicom.fluentmapper.core.config.MapperConfiguration;
 
 public final class InternalMapperConfigurationBuilder implements MapperConfigurationBuilder {
 
-    private String[] exportPaths;
-    private boolean exports = false;
-    private String mappingsPackage;
-    private String mappingsPath;
-    private String pathStrategy = "package";
+    private String[] additionalExportPaths = new String[]{};
+    private String mappingsPackage = "";
+    private String classpath = "";
 
     private InternalMapperConfigurationBuilder() {
     }
@@ -25,32 +23,22 @@ public final class InternalMapperConfigurationBuilder implements MapperConfigura
     }
 
     @Override
-    public MapperConfigurationBuilder withMappingsPath(String mappingsPath) {
-        this.mappingsPath = mappingsPath;
-        this.pathStrategy = "path";
+    public MapperConfigurationBuilder withAdditionalExportPaths(String... exportPaths) {
+        this.additionalExportPaths = exportPaths;
         return this;
     }
 
     @Override
-    public MapperConfigurationBuilder exports() {
-        this.exports = true;
-        return this;
-    }
-
-    @Override
-    public MapperConfigurationBuilder exportsTo(String... exportPaths) {
-        this.exportPaths = exportPaths;
-        this.exports = true;
+    public MapperConfigurationBuilder withClasspath(String classpath) {
+        this.classpath = classpath;
         return this;
     }
 
     public MapperConfiguration build() {
         return new MapperConfiguration(
-                this.exportPaths,
-                this.exports,
                 this.mappingsPackage,
-                this.mappingsPath,
-                this.pathStrategy
+                this.additionalExportPaths,
+                this.classpath
         );
     }
 

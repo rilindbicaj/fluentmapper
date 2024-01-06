@@ -12,14 +12,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("SystemLoaderClassFinder tests")
-public class SystemLoaderClassFinderTests {
+@DisplayName("MappingClassFinderTests tests")
+public class MappingClassFinderTests {
 
-    private SystemLoaderClassFinder classFinder;
+    private MappingClassFinder classFinder;
 
     @BeforeEach
     public void initialize() {
-        this.classFinder = new SystemLoaderClassFinder();
+        this.classFinder = new MappingClassFinder(ClassLoader.getSystemClassLoader());
     }
 
     @Test

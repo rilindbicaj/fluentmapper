@@ -9,6 +9,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 
+import java.util.Arrays;
+
 @Mojo(name = "generate-mappings", defaultPhase = LifecyclePhase.COMPILE)
 public class FluentMojo extends AbstractMojo {
 
@@ -16,7 +18,7 @@ public class FluentMojo extends AbstractMojo {
     private MavenProject project;
 
     @Parameter(property = "generate-mappings.exportPath")
-    private String exportPath;
+    private String[] additionalExportPaths;
 
     @Parameter(property = "generate-mappings.mappingsPackage")
     private String mappingsPackage;
@@ -36,20 +38,19 @@ public class FluentMojo extends AbstractMojo {
             throw new MojoFailureException("Could not access classpath - ", e);
         }
 
-        if (exportPath == null) {
-            getLog().info("No export path specified - will only output to classpath.");
+        if (additionalExportPaths.length == 0) {
+            getLog().info("No additional export paths specified - will only output to classpath.");
         } else {
-            getLog().info("Exporting to classpath and to " + exportPath);
+            getLog().info("Exporting to classpath and to " + Arrays.toString(additionalExportPaths));
         }
 
         FluentFactory.createConfigured(config -> {
-            config.exportsTo(classpath + "/META-INF/orm.xml", exportPath)
+            config.withAdditionalExportPaths(additionalExportPaths)
                     .withMappingsPackage(mappingsPackage)
-                    .withMappingsPath(classpath);
+                    .withClasspath(classpath);
         }).execute();
 
         getLog().info("FluentMojo finished.");
-
     }
 
 }
