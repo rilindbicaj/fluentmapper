@@ -9,6 +9,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -17,7 +18,6 @@ import java.util.List;
  * when the library is executed by the application using it, meaning the necessary mapping
  * classes have been loaded together with the application, therefore they're present in the
  * classloader and can be accessed from there.
- *
  * </p>
  * <p>
  * In cases where the mapping classes are not on the classpath during the library's execution,
@@ -61,24 +61,15 @@ public final class SystemLoaderClassFinder implements MappingClassFinder {
                     + ". Could not locate resource or package contains no files.");
         }
 
-        List<File> files = this.classLoader.resources(path)
+        return this.classLoader.resources(path)
                 .map(URL::getFile)
+                .distinct() // For some reason it returns duplicate class files in test environments, needs to be researched
                 .map(File::new)
-                .toList();
-
-        List<Class<? extends EntityMapper<?>>> classes = files.stream()
-                .distinct() // Find out why duplicate URLs are generated in test files
                 .map(file -> findClasses(file, packageName))
-                .flatMap(List::stream)
-                .toList();
-
-        List<Class<? extends EntityMapper<?>>> mappingClasses = classes.stream()
+                .flatMap(Collection::stream)
                 .filter(EntityMapper.class::isAssignableFrom)
+                .peek(mappingClass -> logger.info("Located mapping class {}", mappingClass.getSimpleName()))
                 .toList();
-
-        logger.info("Located mapping files {}", mappingClasses.stream().map(Class::getSimpleName).toList());
-
-        return mappingClasses;
     }
 
     @SuppressWarnings("unchecked")
