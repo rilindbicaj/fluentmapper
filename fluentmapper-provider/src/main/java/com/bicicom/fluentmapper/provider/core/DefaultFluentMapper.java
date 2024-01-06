@@ -23,12 +23,22 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 
 final class DefaultFluentMapper implements FluentMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(FluentMapper.class);
-    private static final Function<Class<? extends EntityMapper<?>>, EntityMapper<?>> toMapper = (mappingClass) -> {
+    private final MapperConfiguration mapperConfiguration;
+    private final TaskExecutor executor;
+
+    public DefaultFluentMapper(MapperConfiguration mapperConfiguration) {
+        this.mapperConfiguration = mapperConfiguration;
+        this.executor = new TaskExecutor();
+        ModelClassLoader.INSTANCE.setClassLoader(this.initializeModelClassLoader());
+        logger.debug("FluentMapper initialized.");
+    }
+
+    @SuppressWarnings("unchecked")
+    private static EntityMapper<?> instantiateMapper(Class<? extends EntityMapper<?>> mappingClass) {
         try {
             Constructor<?> constructor = Arrays.stream(mappingClass.getDeclaredConstructors())
                     .filter(c -> c.getParameterCount() == 0)
@@ -46,15 +56,6 @@ final class DefaultFluentMapper implements FluentMapper {
         } catch (IllegalAccessException e) {
             throw new FluentMapperException("Could not instantiate " + mappingClass + "; no access to constructor.", e);
         }
-    };
-    private final MapperConfiguration mapperConfiguration;
-    private final TaskExecutor executor;
-
-    public DefaultFluentMapper(MapperConfiguration mapperConfiguration) {
-        this.mapperConfiguration = mapperConfiguration;
-        this.executor = new TaskExecutor();
-        ModelClassLoader.INSTANCE.setClassLoader(this.initializeModelClassLoader());
-        logger.debug("FluentMapper initialized.");
     }
 
     @Override
@@ -67,12 +68,12 @@ final class DefaultFluentMapper implements FluentMapper {
                 mapperConfiguration.mappingsPackage()
         );
 
-        var mappers = mappingClasses.stream()
-                .map(toMapper)
+        var mapperInstances = mappingClasses.stream()
+                .map(DefaultFluentMapper::instantiateMapper)
                 .peek(mapping -> logger.debug("Registered mapping {}", mapping.getClass().getName()))
                 .toList();
 
-        var models = this.executor.submitMappings(mappers);
+        var models = this.executor.submitMappers(mapperInstances);
 
         final String mappings = this.executor.submitModels(models);
 
@@ -125,7 +126,6 @@ final class DefaultFluentMapper implements FluentMapper {
      * supposed to be read-only, it's best if this file is exported somewhere in the
      * file system.
      */
-
     private void exportMappings(String mappings) {
         try {
             String[] outputPaths = mapperConfiguration.exportPaths();

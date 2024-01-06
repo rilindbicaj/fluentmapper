@@ -40,11 +40,11 @@ public final class TaskExecutor {
      * Executes the mapping classes provided and configures the entity models according
      * to their contents.
      *
-     * @param mappings the user-defined mappings to process
-     * @return a list of {@link Entity} instances with fields set according to the provided mappings
+     * @param mappers instances of {@link EntityMapper} which were defined by the user
+     * @return a list of {@link Entity} instances with fields set according to the provided mappers
      */
-    public List<Entity> submitMappings(Collection<EntityMapper<?>> mappings) {
-        var tasks = mappings.stream()
+    public List<Entity> submitMappers(Collection<? extends EntityMapper<?>> mappers) {
+        var tasks = mappers.stream()
                 .map(ConfigurationBuildingTask::new)
                 .toList();
         try {
