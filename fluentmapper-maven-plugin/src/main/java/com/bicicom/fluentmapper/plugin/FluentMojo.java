@@ -3,7 +3,6 @@ package com.bicicom.fluentmapper.plugin;
 import com.bicicom.fluentmapper.provider.core.FluentFactory;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -23,7 +22,7 @@ public class FluentMojo extends AbstractMojo {
     private String mappingsPackage;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute() throws MojoFailureException {
 
         getLog().info("Initializing FluentMapper...");
 
