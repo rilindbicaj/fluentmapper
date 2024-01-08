@@ -7,6 +7,8 @@ import com.bicicom.fluentmapper.provider.expression.parser.ExpressionParser;
 
 abstract class BaseModelBuilder {
 
+    protected BaseModelBuilder() {}
+
     /**
      * The parser to be used for extracting {@link ExpressionMetadata} objects from passed {@link Expression} objects.
      * A single instance is kept, in order to utilize the caching mechanism.
