@@ -14,6 +14,7 @@ import java.util.List;
 
 /**
  * Responsible for locating classes implementing {@link EntityMapper}.
+ * TODO - possibly replace with the Reflections library for safety and support for subdirectories
  */
 public final class MappingClassFinder {
 
@@ -51,27 +52,12 @@ public final class MappingClassFinder {
 
         return this.classLoader.resources(path)
                 .map(URL::getFile)
-                .distinct() // For some reason it returns duplicate class files in test environments, needs to be researched
                 .map(File::new)
                 .map(file -> findClasses(file, packageName))
                 .flatMap(Collection::stream)
                 .filter(EntityMapper.class::isAssignableFrom)
                 .peek(mappingClass -> logger.info("Located mapping class {}", mappingClass.getSimpleName()))
                 .toList();
-    }
-
-    @SuppressWarnings("unchecked")
-    private Class<? extends EntityMapper<?>> getClassFromFile(File file, String packageName) {
-        if (file.getName().endsWith(".class")) {
-            String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
-            try {
-                return (Class<? extends EntityMapper<?>>) Class.forName(className, false, classLoader);
-            } catch (ClassNotFoundException e) {
-                throw new FluentMapperException("Could not load class " + className);
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -82,7 +68,6 @@ public final class MappingClassFinder {
      * @return The classes
      */
     private List<Class<? extends EntityMapper<?>>> findClasses(File file, String packageName) {
-        // TODO - check if this actually gets subdirs. Also check if you actually want this to happen
         List<Class<? extends EntityMapper<?>>> classes = new ArrayList<>();
 
         if (!file.exists()) {
@@ -104,6 +89,20 @@ public final class MappingClassFinder {
         }
 
         return classes;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<? extends EntityMapper<?>> getClassFromFile(File file, String packageName) {
+        if (file.getName().endsWith(".class")) {
+            String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
+            try {
+                return (Class<? extends EntityMapper<?>>) Class.forName(className, false, classLoader);
+            } catch (ClassNotFoundException e) {
+                throw new FluentMapperException("Could not load class " + className, e);
+            }
+        }
+
+        return null;
     }
 
 }
