@@ -38,6 +38,7 @@
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
             <version>4.0.0</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
