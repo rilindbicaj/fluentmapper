@@ -9,31 +9,46 @@ import com.bicicom.fluentmapper.provider.model.Table;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Set;
 
 /**
- * Constructs new instances of EntityModel with default values reflectively accessed
- * from the entity class. Bootstraps an instance so that it's not necessary to define redundant mappings
- * like basic attributes and IDs.
+ * <p>
+ * Constructs new instances of {@link Entity} given a client entity / domain class. Populates the instance with default values,
+ * such as the <b>entity's name</b>, <b>table</b>, <b>primary key</b>, and <b>basic fields</b>.
+ * </p>
+ * <p>
+ * These values are extracted from the class' metadata, attempting to guess which fields corresponds to their respective
+ * JPA mappings. They can always be overridden via builder later on - the bootstrapper's role is removing the need
+ * to specify the simple mappings.
+ * </p>
  */
-
 public final class EntityModelBootstrapper {
 
+    /**
+     * The {@link ModelClassLoader} used for loading the client entity class.
+     */
     private static final ModelClassLoader modelClassLoader = ModelClassLoader.INSTANCE;
+
+    /**
+     * The set of types assumed to be candidates for being a {@link Basic} mapping.
+     */
+    private static final Set<Class<?>> BASIC_CANDIDATE_TYPES = Set.of(Integer.class, String.class);
+
+    /**
+     * The client entity class to be bootstrapped.
+     */
     private final Class<?> entityClass;
-    private final String qualifiedClassName;
 
     private EntityModelBootstrapper(Class<?> entityClass) {
         this.entityClass = entityClass;
-        this.qualifiedClassName = entityClass.getName();
     }
 
     /**
-     * Creates and sets up a boostrappper for an entity class.
+     * Creates and sets up a bootstrapper for the entity class corresponding to the provided name.
      *
      * @param qualifiedClassName the qualified class name of the entity
      * @return an instance of the bootstrapper able to create bootstrapped EntityModel objects for the provided entity
      */
-
     public static EntityModelBootstrapper forClass(String qualifiedClassName) {
         try {
             Class<?> entityClass = modelClassLoader.getClassLoader().loadClass(qualifiedClassName);
@@ -48,22 +63,36 @@ public final class EntityModelBootstrapper {
     }
 
     /**
-     * Determines whether a field of a model class is a candidate for being a {@link Basic} attribute.
+     * Determines whether a field of an entity class is a candidate for being a {@link Basic} attribute.
      *
-     * @param field the model field to check
-     * @return true if the field is a basic attribute candidate, false otherwise
+     * @param field the entity class field to check
+     * @return <b>true</b> if the field is a {@link Basic} candidate, <b>false</b> otherwise
      */
     private boolean isBasicCandidate(Field field) {
-        var fieldType = field.getType();
-        return fieldType == Integer.class || fieldType == String.class; // Support more in the future
+        return BASIC_CANDIDATE_TYPES.contains(field.getType());
     }
 
     /**
-     * Determines whether a field of the model class is a candidate for being a primary key. Currently
-     * only supports camelCase naming, so a filed "user_id" would not pass the check.
+     * <p>
+     * Determines whether a field of the model class is a candidate for being a primary key. Currently only supports
+     * <code>camelCase</code> naming.
+     * </p>
+     * <p>
+     * For example, the following class
+     * <pre>
+     *     {@code
+     *       public class User {
+     *          int id;
+     *          String name;
+     *       }
+     *     }
+     * </pre>
+     * would have its <code>id</code> field considered as a primary key candidate. That would also be the case if the
+     * field was named <code>userId</code> instead.
+     * </p>
      *
-     * @param field the model field to check
-     * @return true if the field can be considered a primary key by default, false otherwise
+     * @param field the entity class field to check
+     * @return <b>true</b> if the field can be considered a primary key by default, <b>false</b> otherwise
      */
     private boolean isKeyCandidate(Field field) {
         String entityClassName = this.entityClass.getSimpleName();
@@ -71,23 +100,29 @@ public final class EntityModelBootstrapper {
     }
 
     /**
+     * <p>
      * Bootstraps an instance of {@link Entity} with set default attributes. This alleviates the need
      * to specify all necessary mappings manually, like primary keys or basic fields, in the mapping file.
-     * <p>
      * The method sets the following {@link Entity} fields - {@link Basic}, {@link Id} and {@link Table}.
+     * </p>
      * <p>
-     * For example, a model <code>User</code> with the fields <code>id</code> and <code>name</code>, with a blank
-     * mapping configuration class, will map <id>id</id> as the primary key, and <code>name</code> as a column in the
-     * database table <code>users</code>. To be specific, it would output the following XML :
-     *
+     * For example, an entity class such as
+     * </p>
      * <pre>
-     *     {@code
-     *      <table name="users" schema="public"></table>
-     *      <attributes>
-     *        <id name="id"></id>
-     *        <basic name="name"></basic>
-     *      </attributes>
-     *     }
+     * public class User {
+     *      int id;
+     *      String name;
+     * }
+     * </pre>
+     * <p>would output the following XML if no further configurations are applied - </p>
+     * <pre>
+     * {@code
+     * <table name="users" schema="public"></table>
+     * <attributes>
+     *      <id name="id"></id>
+     *      <basic name="name"></basic>
+     * </attributes>
+     * }
      * </pre>
      *
      * @return the bootstrapped {@link Entity} instance
@@ -97,7 +132,7 @@ public final class EntityModelBootstrapper {
         String entityClassName = this.entityClass.getSimpleName();
 
         entityModel.setName(entityClassName);
-        entityModel.setClazz(this.qualifiedClassName);
+        entityModel.setClazz(this.entityClass.getName());
 
         List<Field> modelFields = List.of(this.entityClass.getDeclaredFields());
         List<Id> ids = this.findIdCandidates(modelFields);

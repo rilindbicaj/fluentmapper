@@ -13,9 +13,6 @@ public final class TaskExecutor {
     private final ExecutorService executorService;
 
     public TaskExecutor() {
-        // TODO - check if a more CPU intensive, less reflection based solution can leverage the concurrent structure
-        // Caching has proved more efficient than concurrency at least for smaller loads. Also, because most of the
-        // bottleneck regarding JAXB is its initialization time, adding more threads is not gonna affect throughput
         this.executorService = Executors.newVirtualThreadPerTaskExecutor();
     }
 
