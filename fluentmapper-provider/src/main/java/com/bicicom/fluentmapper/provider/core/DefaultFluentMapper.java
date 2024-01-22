@@ -50,7 +50,7 @@ final class DefaultFluentMapper implements FluentMapper {
                             + "; There is no public, no-args constructor present in mapping class ")
                     );
 
-            return (EntityMapper<?>) constructor.newInstance(new Object[]{});
+            return (EntityMapper<?>) constructor.newInstance();
         } catch (InstantiationException e) {
             throw new FluentMapperException("Could not instantiate " + mappingClass + "; mapping class cannot be abstract.", e);
         } catch (InvocationTargetException e) {
