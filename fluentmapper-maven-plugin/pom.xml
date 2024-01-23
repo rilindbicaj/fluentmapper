@@ -38,7 +38,7 @@
             <groupId>com.bicicom.fluentmapper</groupId>
             <artifactId>fluentmapper-provider</artifactId>
             <version>0.0.1</version>
-            <scope>runtime</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
