@@ -51,7 +51,7 @@ public interface ManyToManyConfigurationBuilder<S, T> {
      * noting the model User as the owner of the relationship, and the one who maps
      * this relationship further.
      *
-     * @return the same builder for chaining calls
+     * @return the same builder for further chaining
      */
 
     ManyToManyConfigurationBuilder<S, T> isMapped();

@@ -13,12 +13,11 @@ public class JoinTableBuilder implements JoinTableConfigurationBuilder {
     }
 
     @Override
-    public JoinTableConfigurationBuilder withForeignKey(String foreignKey, String joinTableKey) {
+    public JoinTableConfigurationBuilder withForeignKey(String foreignKey, String referencedPrimaryKey) {
         var joinColumn = new JoinColumn();
         joinColumn.setName(foreignKey);
-        joinColumn.setReferencedColumnName(joinTableKey);
+        joinColumn.setReferencedColumnName(referencedPrimaryKey);
 
-        // TODO - something about collections being named in singular
         joinTable.getJoinColumn().add(joinColumn);
 
         return this;
@@ -36,10 +35,10 @@ public class JoinTableBuilder implements JoinTableConfigurationBuilder {
     }
 
     @Override
-    public JoinTableConfigurationBuilder withInverseForeignKey(String foreignKey, String joinTableKey) {
+    public JoinTableConfigurationBuilder withInverseForeignKey(String foreignKey, String referencedPrimaryKey) {
         var joinColumn = new JoinColumn();
         joinColumn.setName(foreignKey);
-        joinColumn.setReferencedColumnName(joinTableKey);
+        joinColumn.setReferencedColumnName(referencedPrimaryKey);
 
         joinTable.getInverseJoinColumn().add(joinColumn);
 

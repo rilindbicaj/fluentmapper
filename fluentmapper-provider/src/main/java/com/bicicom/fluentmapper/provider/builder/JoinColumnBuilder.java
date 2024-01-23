@@ -4,7 +4,7 @@ import com.bicicom.fluentmapper.expression.Expression;
 import com.bicicom.fluentmapper.model.builder.JoinColumnConfigurationBuilder;
 import com.bicicom.fluentmapper.provider.model.JoinColumn;
 
-public class JoinColumnBuilder extends BaseModelBuilder implements JoinColumnConfigurationBuilder {
+public class JoinColumnBuilder<S, T> extends BaseModelBuilder implements JoinColumnConfigurationBuilder<S, T> {
 
     private final JoinColumn joinColumn;
 
@@ -13,44 +13,44 @@ public class JoinColumnBuilder extends BaseModelBuilder implements JoinColumnCon
     }
 
     @Override
-    public <S> JoinColumnConfigurationBuilder referencing(Expression<S, ?> propertyExpression) {
+    public JoinColumnConfigurationBuilder<S, T> referencing(Expression<S, ?> propertyExpression) {
         var columnName = expressionParser.parse(propertyExpression).property();
         this.joinColumn.setReferencedColumnName(columnName);
         return this;
     }
 
     @Override
-    public JoinColumnConfigurationBuilder referencing(String referencedColumnName) {
+    public JoinColumnConfigurationBuilder<S, T> referencing(String referencedColumnName) {
         this.joinColumn.setReferencedColumnName(referencedColumnName);
         return this;
     }
 
     @Override
-    public JoinColumnConfigurationBuilder withLength(int length) {
+    public JoinColumnConfigurationBuilder<S, T> withLength(int length) {
         //TODO - remove this length param
         throw new UnsupportedOperationException("Will deal with this later");
     }
 
     @Override
-    public JoinColumnConfigurationBuilder isRequired() {
+    public JoinColumnConfigurationBuilder<S, T> isRequired() {
         this.joinColumn.setNullable(false);
         return this;
     }
 
     @Override
-    public JoinColumnConfigurationBuilder isRequired(boolean value) {
+    public JoinColumnConfigurationBuilder<S, T> isRequired(boolean value) {
         this.joinColumn.setNullable(value);
         return this;
     }
 
     @Override
-    public JoinColumnConfigurationBuilder isUnique() {
+    public JoinColumnConfigurationBuilder<S, T> isUnique() {
         this.joinColumn.setUnique(true);
         return this;
     }
 
     @Override
-    public JoinColumnConfigurationBuilder isUnique(boolean value) {
+    public JoinColumnConfigurationBuilder<S, T> isUnique(boolean value) {
         this.joinColumn.setUnique(value);
         return this;
     }

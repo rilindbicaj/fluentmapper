@@ -32,13 +32,13 @@ public class OneToOneBuilder<S, T> extends BaseModelBuilder implements OneToOneC
     }
 
     @Override
-    public JoinColumnConfigurationBuilder hasForeignKey(String foreignKeyProperty) {
+    public JoinColumnConfigurationBuilder<S, T> hasForeignKey(String foreignKeyProperty) {
         var joinColumn = new JoinColumn();
         joinColumn.setName(foreignKeyProperty);
 
         relationship.getJoinColumn().add(joinColumn);
 
-        return new JoinColumnBuilder(joinColumn);
+        return new JoinColumnBuilder<>(joinColumn);
     }
 
 }

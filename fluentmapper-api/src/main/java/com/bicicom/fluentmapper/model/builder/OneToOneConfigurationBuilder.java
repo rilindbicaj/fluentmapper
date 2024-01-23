@@ -21,7 +21,7 @@ public interface OneToOneConfigurationBuilder<S, T> {
     /**
      * Marks the relationship as non-owned and mapped by the referenced entity.
      *
-     * @return the same builder for chaining calls
+     * @return the same builder for further chaining
      */
     OneToOneConfigurationBuilder<S, T> isMapped();
 
@@ -31,6 +31,6 @@ public interface OneToOneConfigurationBuilder<S, T> {
      * @param foreignKeyProperty
      * @return a builder for configuring the foreign key column
      */
-    JoinColumnConfigurationBuilder hasForeignKey(String foreignKeyProperty);
+    JoinColumnConfigurationBuilder<S, T> hasForeignKey(String foreignKeyProperty);
 
 }

@@ -1,43 +1,45 @@
 package com.bicicom.fluentmapper.model.builder;
 
+/**
+ * Configures a JPA {@code JoinTable} mapping.
+ */
 public interface JoinTableConfigurationBuilder {
 
     /**
-     * Specifies the foreign key of the configured entity, as well as that of the primary key column
-     * it references in the join table.
+     * Specifies the foreign key referencing the owning entity's primary key in the {@code JoinTable}, as well as the
+     * primary key's name.
      *
-     * @param foreignKey   the foreign key column's name
-     * @param joinTableKey the primary key column in the join table this foreign key references
-     * @return the same builder for chaining calls
+     * @param foreignKey           the foreign key column's name, present in the {@code JoinTable}
+     * @param referencedPrimaryKey the primary key column's name, being referenced by this foreign key
+     * @return the same builder for further chaining
      */
-    JoinTableConfigurationBuilder withForeignKey(String foreignKey, String joinTableKey);
+    JoinTableConfigurationBuilder withForeignKey(String foreignKey, String referencedPrimaryKey);
 
     /**
-     * Specifies the foreign key of the configured entity which references the join table. This
-     * approach assumes the entity's foreign key naming is the same as the primary key in the
-     * join table.
+     * Specifies the foreign key referencing the owning entity's primary key in the {@code JoinTable}. The owning
+     * entity's primary key name is assumed to be the same as the foreign key's.
      *
-     * @param foreignKey the foreign key column's name
-     * @return the same builder for chaining calls
+     * @param foreignKey the foreign key column's name, present in the {@code JoinTable}
+     * @return the same builder for further chaining
      */
     JoinTableConfigurationBuilder withForeignKey(String foreignKey);
 
     /**
-     * Specifies the foreign key of the related entity in this relationship, as well as that of the
-     * primary key column it references in the join table.
+     * Specifies the foreign key referencing the non-owning entity's primary key in the {@code JoinTable}, as well as the
+     * primary key's name.
      *
-     * @param foreignKey   the foreign key column's name, present in the related entity
-     * @param joinTableKey the primary key column in the join table this foreign key references
-     * @return the same builder for chaining calls
+     * @param foreignKey   the foreign key column's name, present in the non-owning entity
+     * @param joinTableKey the primary key column in the {@code oinTable} this foreign key references
+     * @return the same builder for further chaining
      */
     JoinTableConfigurationBuilder withInverseForeignKey(String foreignKey, String joinTableKey);
 
     /**
-     * Specifies the foreign key of the related entity in this relationship, which references the join table.
-     * This approach assumes the entity's foreign key naming is the same as the primary key in the join table.
+     * Specifies the foreign key referencing the non-owning entity's primary key in the {@code JoinTable}. The non-owning
+     * entity's primary key name is assumed to be the same as the foreign key's.
      *
-     * @param foreignKey the foreign key column's name, present in the related entity
-     * @return the same builder for chaining calls
+     * @param foreignKey the foreign key column's name, present in the non-owning entity
+     * @return the same builder for further chaining
      */
     JoinTableConfigurationBuilder withInverseForeignKey(String foreignKey);
 

@@ -2,20 +2,53 @@ package com.bicicom.fluentmapper.model.builder;
 
 import com.bicicom.fluentmapper.expression.Expression;
 
-public interface JoinColumnConfigurationBuilder extends ColumnConfigurationBuilder {
+/**
+ * Configures a JPA {@code JoinColumn} mapping.
+ *
+ * @param <S> the source entity, containing the {@code JoinColumn}
+ * @param <T> the target entity, holding the key which this {@code JoinColumn} references
+ */
+public interface JoinColumnConfigurationBuilder<S, T> extends ColumnConfigurationBuilder {
 
-    <S> JoinColumnConfigurationBuilder referencing(Expression<S, ?> propertyExpression);
+    /**
+     * Specifies the column this {@code JoinColumn} references in the target entity {@code <T>}.
+     *
+     * @param propertyExpression the expression specifying the property in {@code <T>}
+     * @return the same builder for further chaining
+     */
+    JoinColumnConfigurationBuilder<S, T> referencing(Expression<S, ?> propertyExpression);
 
-    JoinColumnConfigurationBuilder referencing(String referencedColumnName);
+    /**
+     * Specifies the column this {@code JoinColumn} references in the target entity {@code <T>}.
+     *
+     * @param referencedColumnName the name of the column in {@code <T>}.
+     * @return the same builder for further chaining
+     */
+    JoinColumnConfigurationBuilder<S, T> referencing(String referencedColumnName);
 
-    JoinColumnConfigurationBuilder withLength(int length);
+    /**
+     * {@inheritDoc}
+     */
+    JoinColumnConfigurationBuilder<S, T> withLength(int length);
 
-    JoinColumnConfigurationBuilder isRequired();
+    /**
+     * {@inheritDoc}
+     */
+    JoinColumnConfigurationBuilder<S, T> isRequired();
 
-    JoinColumnConfigurationBuilder isRequired(boolean value);
+    /**
+     * {@inheritDoc}
+     */
+    JoinColumnConfigurationBuilder<S, T> isRequired(boolean value);
 
-    JoinColumnConfigurationBuilder isUnique();
+    /**
+     * {@inheritDoc}
+     */
+    JoinColumnConfigurationBuilder<S, T> isUnique();
 
-    JoinColumnConfigurationBuilder isUnique(boolean value);
+    /**
+     * {@inheritDoc}
+     */
+    JoinColumnConfigurationBuilder<S, T> isUnique(boolean value);
 
 }

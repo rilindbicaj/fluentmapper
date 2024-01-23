@@ -3,15 +3,30 @@ package com.bicicom.fluentmapper.model.builder;
 import java.util.function.Consumer;
 
 /**
- * Configures the primary key of an entity.
+ * Configures a JPA {@code Id} mapping, or in general terms, a primary key.
  *
- * @param <S> the source entity whose key is being configured
- * @param <P> the type of the property bound to this key
+ * @param <S> the source entity whose {@code Id} mapping is being configured
+ * @param <T> the type of the property mapping this {@code Id}
  */
-public interface KeyConfigurationBuilder<S, P> {
+public interface KeyConfigurationBuilder<S, T> {
 
-    KeyConfigurationBuilder<S, P> toColumn(String columnName);
+    /**
+     * Specifies the name of the column this primary key is contained in.
+     *
+     * @param columnName the name of the column
+     * @return the same builder for further chaining
+     */
+    KeyConfigurationBuilder<S, T> toColumn(String columnName);
 
-    KeyConfigurationBuilder<S, P> toColumn(String columnName, Consumer<ColumnConfigurationBuilder> columnConfigurationConsumer);
+    /**
+     * Specifies the name of the column this primary key is contained in, as well as provides the option to
+     * configure the same column.
+     *
+     * @param columnName                  the name of the column
+     * @param columnConfigurationConsumer a {@link Consumer} which accepts a {@link ColumnConfigurationBuilder} and
+     *                                    configures the column as per its instructions
+     * @return the same builder for further chaining
+     */
+    KeyConfigurationBuilder<S, T> toColumn(String columnName, Consumer<ColumnConfigurationBuilder> columnConfigurationConsumer);
 
 }
