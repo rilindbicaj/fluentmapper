@@ -32,15 +32,18 @@
                     <version>${maven.javadoc.plugin.version}</version>
                     <executions>
                         <execution>
+                            <id>attach-javadoc</id>
                             <goals>
-                                <goal>aggregate</goal>
+                                <goal>jar</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>aggregate-jar</id>
+                            <goals>
+                                <goal>aggregate-jar</goal>
                             </goals>
                         </execution>
                     </executions>
-                    <configuration>
-                        <show>private</show>
-                        <skippedModules>fluentmapper-core,fluentmapper-maven-plugin</skippedModules>
-                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
