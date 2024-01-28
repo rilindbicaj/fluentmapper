@@ -2,14 +2,21 @@ package com.bicicom.fluentmapper.model.builder;
 
 import com.bicicom.fluentmapper.expression.Expression;
 
+/**
+ * Configures a JPA {@code one-to-many} relationship.
+ *
+ * @param <S> the source entity, having many of {@code <T>}
+ * @param <T> the target entity, of which {@code <S>} has many of
+ */
 public interface OneToManyConfigurationBuilder<S, T> {
 
     /**
-     * Specifies the property in the related entity which maps this relationship. If this
-     * is not configured explicitly, the default option will be chosen.
+     * Specifies the property mapping this relationship, if {@code <T>} is not on the owning side. This effectively
+     * marks {@code <S>} as the owning side of the relationship.
      *
-     * @param propertyExpression the property accessing expression
-     * @return the builder for chaining calls
+     * @param propertyExpression the expression specifying the property in {@code <S>} which maps the relationship.
+     *
+     * @return the same builder for further chaining
      */
     OneToManyConfigurationBuilder<S, T> mappedBy(Expression<T, S> propertyExpression);
 

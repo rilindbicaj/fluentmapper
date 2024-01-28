@@ -25,7 +25,8 @@ public interface ManyToManyConfigurationBuilder<S, T> {
     JoinTableConfigurationBuilder joinOnTable(String tableName);
 
     /**
-     * Specifies the property mapping this relationship, if {@code <T>} is not on the owning side.
+     * Specifies the property mapping this relationship, if {@code <T>} is not on the owning side. This effectively
+     * marks {@code <S>} as the owning side of the relationship.
      *
      * @param propertyExpression the expression specifying the property in {@code <S>} which maps the relationship.
      *

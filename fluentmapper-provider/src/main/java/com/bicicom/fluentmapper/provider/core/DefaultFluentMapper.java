@@ -26,6 +26,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The default implementation of Fluentmapper.
+ */
 final class DefaultFluentMapper implements FluentMapper {
 
     private static final Logger logger = LoggerFactory.getLogger(FluentMapper.class);

@@ -1,3 +1,6 @@
+/**
+ * Provides the implementation of Fluentmapper's API.
+ */
 module fluentmapper.provider {
     requires fluentmapper.api;
     requires org.objectweb.asm.tree;

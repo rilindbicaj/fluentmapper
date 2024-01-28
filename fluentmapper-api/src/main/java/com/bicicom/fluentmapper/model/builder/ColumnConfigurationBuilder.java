@@ -8,6 +8,7 @@ public interface ColumnConfigurationBuilder {
      * Specifies the {@code length} of the column being configured.
      *
      * @param length the length of the column
+     *
      * @return the same builder for further chaining
      */
     ColumnConfigurationBuilder withLength(int length);
@@ -20,9 +21,10 @@ public interface ColumnConfigurationBuilder {
     ColumnConfigurationBuilder isRequired();
 
     /**
-     * Specifies the {@code required} value of the columns being configured.
+     * Specifies the {@code required} value of the column.
      *
      * @param value the value to be set
+     *
      * @return the same builder for further chaining
      */
     ColumnConfigurationBuilder isRequired(boolean value);
@@ -38,6 +40,7 @@ public interface ColumnConfigurationBuilder {
      * Specifies the {@code unique} value of the column.
      *
      * @param value the boolean value to be set
+     *
      * @return the same builder for further chaining
      */
     ColumnConfigurationBuilder isUnique(boolean value);

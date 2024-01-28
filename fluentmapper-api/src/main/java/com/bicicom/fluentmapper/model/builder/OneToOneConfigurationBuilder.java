@@ -3,33 +3,39 @@ package com.bicicom.fluentmapper.model.builder;
 import com.bicicom.fluentmapper.expression.Expression;
 
 /**
- * Configures a JPA One-to-One relationship between entities S and T.
+ * Configures a JPA {@code one-to-one} relationship.
  *
- * @param <S> the source entity being configured
- * @param <T> the target entity of the one-to-one relationship
+ * @param <S> the source entity, having one of {@code <T>}
+ * @param <T> the target entity, of which {@code <S>} has one of.
  */
 public interface OneToOneConfigurationBuilder<S, T> {
 
     /**
-     * Specifies the property which maps this relationship.
+     * Specifies the property mapping this relationship, if {@code <T>} is not on the owning side. This effectively
+     * marks {@code <S>} as the owning side of the relationship.
      *
-     * @param propertyExpression the expression accessing the property mapping the relationship
-     * @return the builder
+     * @param propertyExpression the expression specifying the property in {@code <S>} which maps the relationship.
+     *
+     * @return the same builder for further chaining
      */
     OneToOneConfigurationBuilder<S, T> mappedBy(Expression<T, S> propertyExpression);
 
     /**
-     * Marks the relationship as non-owned and mapped by the referenced entity.
+     * Marks this relationship as mapped by the associated property in {@code <S>} which forms the other side of the
+     * relationship, effectively marking {@code <T>} as the non-owning side of it. Calling this method is equivalent to
+     * calling {@link OneToOneConfigurationBuilder#mappedBy(Expression)} with an expression pointing to that
+     * associated property in {@code <S>}.
      *
      * @return the same builder for further chaining
      */
     OneToOneConfigurationBuilder<S, T> isMapped();
 
     /**
-     * Specifies the foreign key of this relationship, present in the source model.
+     * Specifies the foreign key of this relationship, present in the source entity {@code <S>}.
      *
-     * @param foreignKeyProperty
-     * @return a builder for configuring the foreign key column
+     * @param foreignKeyProperty the name of the foreign key
+     *
+     * @return a {@link JoinColumnConfigurationBuilder} to configure the mappings of the foreign key column
      */
     JoinColumnConfigurationBuilder<S, T> hasForeignKey(String foreignKeyProperty);
 
