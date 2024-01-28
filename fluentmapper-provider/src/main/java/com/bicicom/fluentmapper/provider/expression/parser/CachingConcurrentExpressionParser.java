@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
  * Expression parser for usage in a concurrent environment. Caches each model class file read, together with
  * all it's methods, so it only reads a model class once.
  */
-
 public final class CachingConcurrentExpressionParser extends ExpressionParser {
     private static final Logger logger = LoggerFactory.getLogger(CachingConcurrentExpressionParser.class);
     private final ConcurrentMap<String, Map<String, MethodNode>> classLambdas = new ConcurrentHashMap<>();
@@ -63,6 +62,7 @@ public final class CachingConcurrentExpressionParser extends ExpressionParser {
                     .collect(Collectors.toConcurrentMap(
                             method -> method.name,
                             methodNode -> methodNode,
+                            // TODO - Handle duplicate keys more elegantly
                             (a, b) -> a // ignores duplicate keys for now
                     ));
             // Could go one step further and .filter() methods that start with 'lambda' but not worth it

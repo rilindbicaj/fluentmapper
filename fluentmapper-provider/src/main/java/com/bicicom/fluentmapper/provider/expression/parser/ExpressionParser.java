@@ -15,7 +15,6 @@ import java.util.stream.StreamSupport;
 /**
  * Handles parsing of {@link Expression} objects into {@link ExpressionMetadata} records.
  */
-
 public abstract class ExpressionParser {
 
     protected final ExpressionClassExtractor classExtractor = RegexExpressionClassExtractor.INSTANCE;
@@ -28,6 +27,7 @@ public abstract class ExpressionParser {
      * This method is unlikely to change, due to the lambda serialization mechanism being stable.
      *
      * @param expression the {@code Expression} instance
+     *
      * @return the {@code SerializedLambda} instance with metadata on the input expression
      */
     protected static SerializedLambda toSerializedLambda(final Expression<?, ?> expression) {
@@ -46,7 +46,9 @@ public abstract class ExpressionParser {
      * inside it's bytecode instructions, if any.
      *
      * @param expressionNode the {@link MethodNode} whose instructions should be checked
+     *
      * @return a String representing the accessed property's name
+     *
      * @throws ExpressionParseException if the expression has no field access instruction present.
      */
     protected static String findAccessedProperty(final MethodNode expressionNode) throws ExpressionParseException {
@@ -82,6 +84,7 @@ public abstract class ExpressionParser {
      * </pre>
      *
      * @param expression the expression instance to be parsed
+     *
      * @return the expression's relevant metadata, bundled in an object
      */
 

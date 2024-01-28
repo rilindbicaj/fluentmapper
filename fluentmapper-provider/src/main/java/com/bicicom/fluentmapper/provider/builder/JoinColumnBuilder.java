@@ -27,8 +27,8 @@ public class JoinColumnBuilder<S, T> extends BaseModelBuilder implements JoinCol
 
     @Override
     public JoinColumnConfigurationBuilder<S, T> withLength(int length) {
-        //TODO - remove this length param
-        throw new UnsupportedOperationException("Will deal with this later");
+        // TODO - remove this length param from the interface
+        throw new UnsupportedOperationException();
     }
 
     @Override

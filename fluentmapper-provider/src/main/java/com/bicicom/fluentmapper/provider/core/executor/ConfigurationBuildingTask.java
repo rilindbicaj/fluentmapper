@@ -18,6 +18,8 @@ public class ConfigurationBuildingTask<T> implements Callable<Entity> {
     }
 
     private String parseMapperModel() {
+        // TODO - try to make this access less insane. And possibly handle cases of incorrect EntityMapper<T> usage
+        //  via exceptions
         return ((ParameterizedType) this.mapper.getClass().getGenericInterfaces()[0]).getActualTypeArguments()[0].getTypeName();
     }
 

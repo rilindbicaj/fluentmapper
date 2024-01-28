@@ -1,7 +1,7 @@
 package com.bicicom.fluentmapper.provider.core.exception;
 
 /**
- * Exception thrown when FluentMapper tasks have failed.d
+ * Exception thrown when FluentMapper tasks have failed.
  */
 public class FluentMapperExecutionException extends RuntimeException {
 
