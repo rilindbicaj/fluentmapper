@@ -4,57 +4,43 @@ import com.bicicom.fluentmapper.expression.Expression;
 
 import java.util.Collection;
 
+/**
+ * Configures a JPA {@code many-to-many} relationship. This type of relationship is malleable when it comes to
+ * determining the owning, and non owning, side of it. Therefore, neither {@code <S>} nor {@code <T>} are, by default,
+ * owner or non-owner of it. These have to be explicitly specified.
+ *
+ * @param <S> the source entity, for which the relationship is being configured
+ * @param <T> the target entity, forming the other side of the relationship
+ */
 public interface ManyToManyConfigurationBuilder<S, T> {
 
     /**
-     * Specifies the table on which this many-to-many relationship is realized.
+     * Specifies the junction table on which this {@code many-to-many} relationship is realized. Calling this method
+     * effectively marks {@code <S>} as the owning side of the relationship.
      *
-     * @param tableName the name of the table realizing this relationship
-     * @return a builder for configuring the table mappings
+     * @param tableName the name of the junction table realizing this relationship
+     *
+     * @return a {@link JoinTableConfigurationBuilder} to further configure the table
      */
     JoinTableConfigurationBuilder joinOnTable(String tableName);
 
     /**
-     * Specifies the property mapping this relationship if not on the owning side.
+     * Specifies the property mapping this relationship, if {@code <T>} is not on the owning side.
      *
-     * @param propertyExpression the expression specifying the property which maps the relationship
-     * @return the same builder for call chains
+     * @param propertyExpression the expression specifying the property in {@code <S>} which maps the relationship.
+     *
+     * @return the same builder for further chaining
      */
-
     ManyToManyConfigurationBuilder<S, T> mappedBy(Expression<T, Collection<S>> propertyExpression);
 
 
     /**
-     * <p>
-     * Specifies this relationship as mapped by the owning side, with the property used to create
-     * the builder through `withMany()`. A shorthand so the same expression does not have to be
-     * passed twice.
-     * </p>
-     * Meaning, this mapping -
-     * <pre>
-     *     {@code
-     *       modelBuilder.hasMany(Address::getUsers)
-     *                      .withMany(User::getAddresses)
-     *                      .mappedBy(User::getAddresses);
-     *       }
-     * </pre>
-     * <p>
-     * is equivalent to -
-     * </p>
-     * <pre>
-     *     {@code
-     *       modelBuilder.hasMany(Address::getUsers)
-     *                      .withMany(User::getAddresses)
-     *                      .isMapped();
-     *       }
-     * </pre>
-     * noting the model User as the owner of the relationship, and the one who maps
-     * this relationship further.
+     * Marks this relationship as mapped by the associated property in {@code <S>} which forms the other side of the
+     * relationship, effectively marking {@code <T>} as the non-owning side of it. Calling this method is equivalent to
+     * calling {@link ManyToManyConfigurationBuilder#mappedBy(Expression)} with an expression pointing to that
+     * associated property in {@code <S>}.
      *
      * @return the same builder for further chaining
      */
-
     ManyToManyConfigurationBuilder<S, T> isMapped();
-
-
 }

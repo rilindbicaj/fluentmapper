@@ -20,19 +20,23 @@ import java.util.Collection;
 public interface ManyRelationshipConfigurationBuilder<T, S> {
 
     /**
-     * Specifies the property in target entity {@code <T>} which represents the "one" it has of {@code <S>}.
+     * Specifies the property in target entity {@code <T>} which maps the non-owner side of the bidirectional
+     * relationship, representing the "one" {@code <T>} has of {@code <S>}.
      *
      * @param propertyExpression the expression specifying the property
+     *
      * @return a {@link OneToManyConfigurationBuilder} to further configure the relationship
      */
     OneToManyConfigurationBuilder<S, T> withOne(Expression<T, S> propertyExpression);
 
     /**
-     * Specifies the property in target entity {@code <T>} which represents the "many" it has of {@code <S>}. The target
-     * property needs to be {@link Collection} of {@code <S>}.
+     * Specifies the property in target entity {@code <T>} which maps the non-owning side of the bidirectional
+     * relationship, representing the "many" {@code <T>} has of {@code <S>}. The target property needs to be a
+     * {@link Collection} of {@code <S>}.
      *
      * @param propertyExpression the expression specifying the property
-     * @return a {@link OneToManyConfigurationBuilder} to further configure the relationship
+     *
+     * @return a {@link ManyToManyConfigurationBuilder} to further configure the relationship
      */
     ManyToManyConfigurationBuilder<S, T> withMany(Expression<T, Collection<S>> propertyExpression);
 
