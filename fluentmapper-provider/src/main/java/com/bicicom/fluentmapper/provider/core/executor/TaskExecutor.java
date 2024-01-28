@@ -38,6 +38,7 @@ public final class TaskExecutor {
      * to their contents.
      *
      * @param mappers instances of {@link EntityMapper} which were defined by the user
+     *
      * @return a list of {@link Entity} instances with fields set according to the provided mappers
      */
     public List<Entity> submitMappers(Collection<? extends EntityMapper<?>> mappers) {
@@ -58,18 +59,14 @@ public final class TaskExecutor {
      * Creates and executes {@link ConfigurationParsingTask} from the submitted entity models.
      *
      * @param entityModels a {@link Collection} of {@link Entity} instances with which to configure the parsing tasks
+     *
      * @return the XML containing the joined output of all tasks.
      */
     public String submitModels(Collection<Entity> entityModels) {
         try {
-            var task = new ConfigurationParsingTask(entityModels);
-
-            // TODO - check if this is actually concurrent
-            return this.executorService.invokeAll(List.of(task))
-                    .stream()
-                    .map(TaskExecutor::tryGetParsedMappings)
-                    .reduce("", String::concat);
-        } catch (RejectedExecutionException | InterruptedException e) {
+            var configurationParsingTask = new ConfigurationParsingTask(entityModels);
+            return tryGetParsedMappings(this.executorService.submit(configurationParsingTask));
+        } catch (RejectedExecutionException e) {
             throw new FluentMapperExecutionException("Could not parse entity models;", e);
         }
     }
