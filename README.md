@@ -311,7 +311,7 @@ important, as you need to provide this information to the plugin in its configur
 <plugin>
     <groupId>dev.bici</groupId>
     <artifactId>fluentmapper-maven-plugin</artifactId>
-    <version>0.0.1</version>
+    <version>${fluentmapper.version}</version>
     <configuration>
         <mappingsPackage>org.example.demoapp.models.mappings</mappingsPackage>
     </configuration>
