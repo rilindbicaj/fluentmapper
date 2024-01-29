@@ -45,17 +45,13 @@ the entity they're intended for.
 
 ### Usage guide
 
-> [!IMPORTANT]
-> Because publishing to Maven Central seems to be a Herculean task, `fluentmapper` needs to be built locally
-> to use it currently.
+#### Building locally
+
+To build `fluentmapper` and have it available in your local repo, run `mvn clean install`.
 
 #### Declaring dependencies
 
-To make `fluentmapper` locally available, clone the repository, and run `mvn install` after resolving dependencies.
-
-It's recommended to use the `fluentmapper-maven-plugin` in order to generate the mappings `XML` during the
-project's build, making sure it's available for the `JPA` implementation beforehand. To include it in your project,
-add these dependencies -
+To use `fluentmapper` in your project, you must declare a dependency on its API.
 
 ```xml
 
@@ -66,7 +62,8 @@ add these dependencies -
 </dependency>
 ```
 
-And to access the plugin -
+It's recommended to use the `fluentmapper-maven-plugin` in order to generate the mappings `XML` during the
+project's build, making sure it's available for the `JPA` implementation beforehand.
 
 ```xml
 
