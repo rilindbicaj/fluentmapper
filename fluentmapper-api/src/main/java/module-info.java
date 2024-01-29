@@ -3,8 +3,8 @@
  * and builder interfaces.
  */
 module fluentmapper.api {
-    exports com.bicicom.fluentmapper.expression;
-    exports com.bicicom.fluentmapper.model.builder;
-    exports com.bicicom.fluentmapper.core;
-    exports com.bicicom.fluentmapper.core.config;
+    exports dev.bici.fluentmapper.expression;
+    exports dev.bici.fluentmapper.model.builder;
+    exports dev.bici.fluentmapper.core;
+    exports dev.bici.fluentmapper.core.config;
 }

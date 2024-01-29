@@ -8,6 +8,6 @@ module fluentmapper.provider {
     requires org.slf4j;
     requires jakarta.xml.bind;
 
-    opens com.bicicom.fluentmapper.provider.model to jakarta.xml.bind;
-    exports com.bicicom.fluentmapper.provider.core;
+    opens dev.bici.fluentmapper.provider.model to jakarta.xml.bind;
+    exports dev.bici.fluentmapper.provider.core;
 }

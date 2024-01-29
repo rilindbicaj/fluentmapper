@@ -60,7 +60,7 @@ add these dependencies -
 ```xml
 
 <dependency>
-    <groupId>com.bicicom.fluentmapper</groupId>
+    <groupId>dev.bici</groupId>
     <artifactId>fluentmapper-api</artifactId>
     <version>${fluentmapper.version}</version>
 </dependency>
@@ -73,7 +73,7 @@ And to access the plugin -
 <build>
     <plugins>
         <plugin>
-            <groupId>com.bicicom.fluentmapper</groupId>
+            <groupId>dev.bici</groupId>
             <artifactId>fluentmapper-maven-plugin</artifactId>
             <version>${fluentmapper.version}</version>
             <executions>
@@ -312,7 +312,7 @@ important, as you need to provide this information to the plugin in its configur
 ```xml
 
 <plugin>
-    <groupId>com.bicicom.fluentmapper</groupId>
+    <groupId>dev.bici</groupId>
     <artifactId>fluentmapper-maven-plugin</artifactId>
     <version>0.0.1</version>
     <configuration>
