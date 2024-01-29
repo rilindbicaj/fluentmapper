@@ -8,12 +8,16 @@
     <artifactId>fluentmapper-parent</artifactId>
     <version>0.1.0</version>
     <packaging>pom</packaging>
+
     <modules>
-        <module>fluentmapper-core</module>
         <module>fluentmapper-api</module>
         <module>fluentmapper-provider</module>
         <module>fluentmapper-maven-plugin</module>
     </modules>
+
+    <name>fluentmapper</name>
+    <description>Enables configuration of JPA entities programmatically via a fluent builder-based API.</description>
+    <url>https://github.com/rilindbicaj/fluentmapper/</url>
 
     <licenses>
         <license>
@@ -108,20 +112,31 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.5</version>
-                    <executions>
-                        <execution>
-                            <id>sign-artifacts</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>sign</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                    <inherited>false</inherited>
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
 </project>
